@@ -14,6 +14,14 @@ public class Staff extends User{
         this.role = Role.INDOORS;
     }
 
+    public static enum Role {
+        COURIER,
+        INDOORS;
+
+        private Role() {
+        }
+    }
+
     @Override
     public String toString() {
         return String.format("Staff :\n" +
@@ -43,11 +51,4 @@ public class Staff extends User{
         this.staffId = staffId;
     }
 
-    public static enum Role {
-        COURIER,
-        INDOORS;
-
-        private Role() {
-        }
-    }
 }

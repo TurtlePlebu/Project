@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Client extends User{
@@ -11,8 +12,8 @@ public class Client extends User{
     private List<Delivery> deliveries;
 
     public Client(String name, String email, String address, List<Delivery> deliveries) {
-        this.clientId = nextId++;
         super(name, email);
+        this.clientId = nextId++;
         this.address = address;
         this.deliveries = deliveries;
     }
