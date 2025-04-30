@@ -6,12 +6,12 @@ import java.util.Objects;
 public abstract class Delivery {
     protected String description;
     protected LocalDateTime arrivalTime;
-    protected Status Status;
+    protected Status status;
 
     public Delivery(LocalDateTime arrivalTime, String description) {
         this.arrivalTime = arrivalTime;
         this.description = description;
-        this.Status = Status.ONGOING;
+        this.status = Delivery.Status.ONGOING;
     }
 
     public static enum Status {

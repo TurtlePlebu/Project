@@ -11,7 +11,7 @@ public class Staff extends User{
     public Staff(String name, String email) {
         super(name, email);
         this.staffId = nextId++;
-        this.role = Role.INDOORS;
+        this.role = Staff.Role.INDOORS;
     }
 
     public static enum Role {
