@@ -14,6 +14,21 @@ public class Staff extends User{
         this.role = Staff.Role.INDOORS;
     }
 
+    @Override
+    public void register() {
+
+    }
+
+    @Override
+    public void viewDelivery() {
+
+    }
+
+    @Override
+    public void receiveDelivery(Delivery del) {
+
+    }
+
     public static enum Role {
         COURIER,
         INDOORS;

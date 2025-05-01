@@ -7,8 +7,13 @@ public class Mail extends Delivery{
 
     protected String title;
 
-    public Mail(LocalDateTime arrivalTime, String description, String title) {
-        super(arrivalTime, description);
+    public Mail(String address, String description, LocalDateTime arrivalTime, String title) {
+        super(address, description, arrivalTime);
+        this.title = title;
+    }
+
+    public Mail(String address, String description, LocalDateTime arrivalTime, Status status, String title) {
+        super(address, description, arrivalTime, status);
         this.title = title;
     }
 

@@ -13,6 +13,22 @@ public class Manager extends User{
     }
 
     @Override
+    public void register() {
+
+
+    }
+
+    @Override
+    public void viewDelivery() {
+
+    }
+
+    @Override
+    public void receiveDelivery(Delivery del) {
+
+    }
+
+    @Override
     public String toString() {
         return String.format("Manager :\n" +
                 "%-10s: %d\n" +

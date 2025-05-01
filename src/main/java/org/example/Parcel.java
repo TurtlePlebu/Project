@@ -7,16 +7,22 @@ public class Parcel extends Delivery{
     private static int nextId = 0;
 
     private int parcelId;
-    private String address;
     private Item item;
     private int quantity;
 
-    public Parcel(LocalDateTime arrivalTime, String description, String address, Item item, int quantity) {
-        super(arrivalTime, description);
+    public Parcel(String address, String description, LocalDateTime arrivalTime, Status status, Item item, int quantity) {
+        super(address, description, arrivalTime, status);
         this.parcelId = nextId++;
-        this.address = address;
         this.item = item;
         this.quantity = quantity;
+    }
+
+    public Parcel(String address, String description, LocalDateTime arrivalTime, Item item, int quantity) {
+        super(address, description, arrivalTime);
+        this.parcelId = nextId++;
+        this.item = item;
+        this.quantity = quantity;
+        this.status = Delivery.Status.ONGOING;
     }
 
     @Override
@@ -44,14 +50,6 @@ public class Parcel extends Delivery{
 
     public void setParcelId(int parcelId) {
         this.parcelId = parcelId;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public Item getItem() {

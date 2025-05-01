@@ -7,8 +7,8 @@ public class Advertisement extends Mail{
 
     private String companyName;
 
-    public Advertisement(LocalDateTime arrivalTime, String description, String title, String companyName) {
-        super(arrivalTime, description, title);
+    public Advertisement(String description, LocalDateTime arrivalTime, String title, String companyName) {
+        super(null, description, arrivalTime, title);
         this.companyName = companyName;
     }
 
