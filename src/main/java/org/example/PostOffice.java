@@ -7,15 +7,23 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class PostOffice {
+public class PostOffice implements FilePaths{
     private String name;
     private String address;
     private String email;
     private List<Delivery> deliveries;
+    private List<Advertisement> advertisements;
     private List<Ticket> tickets;
     private List<Client> clients;
     private List<Staff> staffs;
     private Manager manager;
+
+    //TODO : Update the files' path & default constructor that loads registered data
+    //TODO : Move files' path
+    public PostOffice() {
+        // load the data
+        importData();
+    }
 
     public PostOffice(String name, String address, String email, Manager manager) {
         this.name = name;
@@ -23,16 +31,18 @@ public class PostOffice {
         this.email = email;
         this.manager = manager;
         this.deliveries = new ArrayList<>();
+        this.advertisements = new ArrayList<>();
         this.tickets= new ArrayList<>();
         this.clients = new ArrayList<>();
         this.staffs = new ArrayList<>();
     }
 
-    public PostOffice(String name, String address, String email, List<Delivery> deliveries, List<Ticket> tickets, List<Client> clients, List<Staff> staffs, Manager manager) {
+    public PostOffice(String name, String address, String email, List<Delivery> deliveries, List<Advertisement> advertisements, List<Ticket> tickets, List<Client> clients, List<Staff> staffs, Manager manager) {
         this.name = name;
         this.address = address;
         this.email = email;
         this.deliveries = deliveries;
+        this.advertisements = advertisements;
         this.tickets = tickets;
         this.clients = clients;
         this.staffs = staffs;
@@ -51,6 +61,7 @@ public class PostOffice {
             exportTickets();
 
         } catch (IOException e) {
+            //TODO : add message
             throw new RuntimeException(e);
 
         } catch (RuntimeException e) {
@@ -67,7 +78,7 @@ public class PostOffice {
      * @throws RuntimeException General unchecked exception
      */
     private void exportPostOfficeInfo() throws IOException, RuntimeException {
-        File file = new File("src/main/resources/Post-Center.csv");
+        File file = new File(POSTCENTER_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(file)) {
             fw.write(name + ",");
@@ -102,7 +113,7 @@ public class PostOffice {
      * @throws RuntimeException General unchecked exception
      */
     private void exportParcels(Parcel parcel) throws IOException, RuntimeException {
-        File parcelFile = new File("src/main/resources/Parcels.csv");
+        File parcelFile = new File(PARCELS_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(parcelFile)) {
             fw.write(parcel.getParcelId() + ",");
@@ -125,13 +136,11 @@ public class PostOffice {
      * @throws RuntimeException General unchecked exception
      */
     private void exportMails(Mail mail) throws IOException, RuntimeException {
-        File mailPath = new File("src/main/resources/Mails.csv");
+        File mailPath = new File(MAILS_FILE_PATH);
         Set<Advertisement> companyAdvertisements = new HashSet<>();
 
         if (mail instanceof Advertisement ad) {
-            if (!companyAdvertisements.contains(ad)) {
-                companyAdvertisements.add(ad);
-            }
+            companyAdvertisements.add(ad);
         }
         else {
             try (FileWriter fw = new FileWriter(mailPath)) {
@@ -146,6 +155,8 @@ public class PostOffice {
         exportCompanyAdvertisements(companyAdvertisements);
     }
 
+    //TODO : Separate
+
     /**
      * inner function for exportMails() function that includes each unique Advertisement
      * @param ads the Set of all different Advertisements to export
@@ -157,7 +168,11 @@ public class PostOffice {
             return;
         }
 
-        File adPath = new File("src/main/resources/CompanyAdvertisements.csv");
+        File adPath = new File(COMPANYADVERTISEMENTS_FILE_PATH);
+
+        for (Advertisement ad : advertisements) {
+            ads.add(ad);
+        }
 
         try (FileWriter fw = new FileWriter(adPath)) {
             for (Advertisement ad : ads) {
@@ -176,7 +191,7 @@ public class PostOffice {
      * @throws RuntimeException General unchecked exception
      */
     private void exportClients() throws IOException, RuntimeException {
-        File clientPath = new File("src/main/resources/Clients.csv");
+        File clientPath = new File(CLIENT_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(clientPath)) {
             for (Client client : clients) {
@@ -194,7 +209,7 @@ public class PostOffice {
      * @throws RuntimeException General unchecked exception
      */
     private void exportStaffs() throws IOException, RuntimeException {
-        File staffPath = new File("src/main/resources/Staffs.csv");
+        File staffPath = new File(STAFF_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(staffPath)) {
             for (Staff staff : staffs) {
@@ -212,7 +227,7 @@ public class PostOffice {
      * @throws RuntimeException General unchecked exception
      */
     private void exportTickets() throws IOException, RuntimeException {
-        File ticketPath = new File("src/main/resources/Tickets.csv");
+        File ticketPath = new File(TICKET_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(ticketPath)) {
             for (Ticket ticket : tickets) {
@@ -237,23 +252,40 @@ public class PostOffice {
      * loads all registered data from Resource file
      * @return the Post-Office with all registered data
      */
-    public PostOffice importData() {
+    private void importData() {
         try {
-
             String[] info = importPostOfficeInfo();
-            String name = info[0];
-            String address = info[1];
-            String email = info[2];
-            Manager manager = new Manager(info[3], info[4]);
-            return new PostOffice(name, address, email, importDeliveries(), importTickets(), importClient(), importStaffs(), manager);
-
-        } catch (RuntimeException e) {
+            this.name = info[0];
+            this.address = info[1];
+            this.email = info[2];
+            this.manager = new Manager(info[3], info[4]);
+            this.deliveries = importDeliveries();
+            this.advertisements = importAdvertisements();
+            this.clients = importClients();
+            this.staffs = importStaffs();
+            this.tickets = importTickets();
+        }
+        catch (RuntimeException e) {
             System.out.println(e.getMessage());
             for (StackTraceElement ste : e.getStackTrace()) {
                 System.out.println(ste.toString());
             }
         }
-        return null;
+
+    }
+
+    /**
+     * handles all FileNotFoundException from importing data functions called by importData()
+     * @param fnfe the FileNotFoundException
+     * @param fileName the filepath name
+     */
+    private void handler(FileNotFoundException fnfe, String fileName) {
+        String message = String.format("Cannot find %s", fileName);
+        System.out.println(message);
+        System.out.println(fnfe.getMessage());
+        for (StackTraceElement ste : fnfe.getStackTrace()) {
+            System.out.println(ste.toString());
+        }
     }
 
     /**
@@ -262,7 +294,7 @@ public class PostOffice {
      * @throws RuntimeException general unchecked exception
      */
     private String[] importPostOfficeInfo()  throws RuntimeException {
-        File file = new File("src/main/resources/Post-Center.csv");
+        File file = new File(POSTCENTER_FILE_PATH);
 
         String[] info = new String[]{};
 
@@ -270,11 +302,7 @@ public class PostOffice {
             info = input.nextLine().split(",");
 
         } catch (FileNotFoundException fnfe) {
-            System.out.println("Can not find Post-Center.csv");
-            System.out.println(fnfe.getMessage());
-            for (StackTraceElement ste : fnfe.getStackTrace()) {
-                System.out.println(ste.toString());
-            }
+            handler(fnfe, POSTCENTER_FILE_PATH);
         }
 
         return info;
@@ -304,7 +332,7 @@ public class PostOffice {
      * @throws RuntimeException general unchecked exception
      */
     private List<Delivery> importParcels() throws RuntimeException {
-        File parcelFile = new File("src/main/resources/Parcels.csv");
+        File parcelFile = new File(PARCELS_FILE_PATH);
         List<Delivery> parcels = new ArrayList<>();
 
         try (Scanner input = new Scanner(parcelFile)) {
@@ -326,11 +354,7 @@ public class PostOffice {
             }
 
         } catch (FileNotFoundException fnfe) {
-            System.out.println("Can not find Parcels.csv");
-            System.out.println(fnfe.getMessage());
-            for (StackTraceElement ste : fnfe.getStackTrace()) {
-                System.out.println(ste.toString());
-            }
+            handler(fnfe, PARCELS_FILE_PATH);
         }
 
         return parcels;
@@ -342,7 +366,7 @@ public class PostOffice {
      * @throws RuntimeException general unchecked exception
      */
     private List<Delivery> importMails() throws RuntimeException {
-        File mailPath = new File("src/main/resources/Mails.csv");
+        File mailPath = new File(MAILS_FILE_PATH);
         List<Delivery> mails = new ArrayList<>();
 
         try (Scanner input = new Scanner(mailPath)) {
@@ -360,14 +384,30 @@ public class PostOffice {
             }
 
         } catch (FileNotFoundException fnfe) {
-            System.out.println("Can not find Mails.csv");
-            System.out.println(fnfe.getMessage());
-            for (StackTraceElement ste : fnfe.getStackTrace()) {
-                System.out.println(ste.toString());
-            }
+            handler(fnfe, MAILS_FILE_PATH);
         }
 
         return mails;
+    }
+
+    private List<Advertisement> importAdvertisements() {
+        File adPath = new File(COMPANYADVERTISEMENTS_FILE_PATH);
+        List<Advertisement> ads = new ArrayList<>();
+
+        try (Scanner input = new Scanner(adPath)) {
+            while (input.hasNextLine()) {
+                String[] adLine = input.nextLine().split(",");
+                String companyName = adLine[0];
+                String description = adLine[1];
+                LocalDateTime arrivalTime = LocalDateTime.parse(adLine[2]);
+                Delivery.Status status = (adLine[3].equalsIgnoreCase("DELIVERED")) ?
+                        Delivery.Status.DELIVERED : Delivery.Status.ONGOING;
+            }
+        } catch (FileNotFoundException fnfe) {
+            handler(fnfe, COMPANYADVERTISEMENTS_FILE_PATH);
+        }
+
+        return ads;
     }
 
     /**
@@ -375,8 +415,8 @@ public class PostOffice {
      * @return a List of Client containing all the clients in the post-office
      * @throws RuntimeException general unchecked exception
      */
-    private List<Client> importClient() throws RuntimeException {
-        File clientPath = new File("src/main/resources/Clients.csv");
+    private List<Client> importClients() throws RuntimeException {
+        File clientPath = new File(CLIENT_FILE_PATH);
         List<Client> clients = new ArrayList<>();
 
         try (Scanner input = new Scanner(clientPath)) {
@@ -391,11 +431,7 @@ public class PostOffice {
                 clients.add(new Client(name, email, address));
             }
         } catch (FileNotFoundException fnfe) {
-            System.out.println("Can not find Clients.csv");
-            System.out.println(fnfe.getMessage());
-            for (StackTraceElement ste : fnfe.getStackTrace()) {
-                System.out.println(ste.toString());
-            }
+            handler(fnfe, CLIENT_FILE_PATH);
         }
 
         return clients;
@@ -407,7 +443,7 @@ public class PostOffice {
      * @throws RuntimeException general unchecked exception
      */
     private List<Staff> importStaffs() throws RuntimeException {
-        File staffPath = new File("src/main/resources/Staffs.csv");
+        File staffPath = new File(STAFF_FILE_PATH);
         List<Staff> staffs = new ArrayList<>();
 
         try (Scanner input = new Scanner(staffPath)) {
@@ -428,11 +464,7 @@ public class PostOffice {
                 }
             }
         } catch (FileNotFoundException fnfe) {
-            System.out.println("Can not find Staffs.csv");
-            System.out.println(fnfe.getMessage());
-            for (StackTraceElement ste : fnfe.getStackTrace()) {
-                System.out.println(ste.toString());
-            }
+            handler(fnfe, STAFF_FILE_PATH);
         }
 
         return staffs;
@@ -444,7 +476,7 @@ public class PostOffice {
      * @throws RuntimeException general unchecked exception
      */
     private List<Ticket> importTickets() throws RuntimeException{
-        File ticketPath = new File("src/main/resources/Tickets.csv");
+        File ticketPath = new File(TICKET_FILE_PATH);
         List<Ticket> tickets = new ArrayList<>();
 
         try (Scanner input = new Scanner(ticketPath)) {
@@ -469,16 +501,13 @@ public class PostOffice {
                 tickets.add(new Ticket(title, detail, searchClient(clientName), type, status, searchStaff(staffName), creationTime));
             }
         } catch (FileNotFoundException fnfe) {
-            System.out.println("Can not find Tickets.csv");
-            System.out.println(fnfe.getMessage());
-            for (StackTraceElement ste : fnfe.getStackTrace()) {
-                System.out.println(ste.toString());
-            }
+            handler(fnfe, TICKET_FILE_PATH);
         }
 
         return tickets;
     }
 
+    //TODO : searchClient(clientName) & searchStaff()
 
 
     @Override
