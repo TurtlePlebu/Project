@@ -11,7 +11,7 @@ public abstract class User {
         this.email = email;
     }
 
-    public abstract void register(User user);
+    public abstract void register();
     public abstract void viewDelivery();
     public abstract void receiveDelivery(Delivery del);
 

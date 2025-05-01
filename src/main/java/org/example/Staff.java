@@ -51,4 +51,11 @@ public class Staff extends User{
         this.staffId = staffId;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }

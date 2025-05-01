@@ -11,11 +11,35 @@ public class Client extends User{
     private String address;
     private List<Delivery> deliveries;
 
+    public Client(String name, String email, String address) {
+        super(name, email);
+        this.clientId = nextId++;
+        this.address = address;
+        this.deliveries = new ArrayList<>();
+    }
+
     public Client(String name, String email, String address, List<Delivery> deliveries) {
         super(name, email);
         this.clientId = nextId++;
         this.address = address;
         this.deliveries = deliveries;
+    }
+
+    @Override
+    public void register() {
+
+    }
+
+    @Override
+    public void viewDelivery() {
+
+    }
+
+    @Override
+    public void receiveDelivery(Delivery del) {
+        if (del != null) {
+            deliveries.add(del);
+        }
     }
 
     @Override

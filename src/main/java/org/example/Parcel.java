@@ -7,20 +7,22 @@ public class Parcel extends Delivery{
     private static int nextId = 0;
 
     private int parcelId;
+    private String address;
     private Item item;
     private int quantity;
 
-    public Parcel(LocalDateTime arrivalTime, String description, Item item, int quantity) {
+    public Parcel(LocalDateTime arrivalTime, String description, String address, Item item, int quantity) {
         super(arrivalTime, description);
         this.parcelId = nextId++;
+        this.address = address;
         this.item = item;
         this.quantity = quantity;
     }
 
     @Override
     public String toString() {
-        return String.format("Parcel : %-5d%-10s%-3d" + super.toString(),
-                parcelId,item.getName(),quantity);
+        return String.format("Parcel : %-5d%-10s%-10s%-3d" + super.toString(),
+                parcelId,address,item.getName(),quantity);
     }
 
     @Override
@@ -28,12 +30,12 @@ public class Parcel extends Delivery{
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Parcel parcel = (Parcel) o;
-        return parcelId == parcel.parcelId && quantity == parcel.quantity && Objects.equals(item, parcel.item);
+        return parcelId == parcel.parcelId && quantity == parcel.quantity && Objects.equals(address, parcel.address) && Objects.equals(item, parcel.item);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), parcelId, item, quantity);
+        return Objects.hash(super.hashCode(), parcelId, address, item, quantity);
     }
 
     public int getParcelId() {
@@ -42,6 +44,14 @@ public class Parcel extends Delivery{
 
     public void setParcelId(int parcelId) {
         this.parcelId = parcelId;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Item getItem() {
