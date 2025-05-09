@@ -1,11 +1,14 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Staff extends User implements Registerable {
     protected static int nextId = 0;
 
     protected int staffId;
+    private List<Ticket> ongoingTickets = new ArrayList<>();
     protected Role role;
 
     public Staff(String name, String email) {
@@ -62,12 +65,12 @@ public class Staff extends User implements Registerable {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Staff staff = (Staff) o;
-        return staffId == staff.staffId;
+        return staffId == staff.staffId && Objects.equals(ongoingTickets, staff.ongoingTickets) && role == staff.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), staffId);
+        return Objects.hash(super.hashCode(), staffId, ongoingTickets, role);
     }
 
     public int getStaffId() {
@@ -84,5 +87,9 @@ public class Staff extends User implements Registerable {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<Ticket> getOngoingTickets() {
+        return ongoingTickets;
     }
 }

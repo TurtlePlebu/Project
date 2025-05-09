@@ -13,7 +13,9 @@ public class PostOffice implements FilePaths{
     protected static String email;
     protected static List<Delivery> deliveries;
     protected static List<Advertisement> advertisements;
-    protected static Set<Ticket> tickets;
+    protected static Queue<Ticket> openedTickets;
+    protected static List<Ticket> ongoingTickets;
+    protected static List<Ticket> completedTickets;
     protected static List<Client> clients;
     protected static List<Staff> staffs;
     protected static Manager manager;
@@ -56,7 +58,8 @@ public class PostOffice implements FilePaths{
             exportDeliveries();
             exportClients();
             exportStaffs();
-            exportTickets();
+            exportOpenedTickets();
+            exportCompletedTickets();
 
         } catch (IOException e) {
             System.out.println("Could not write all the data");
@@ -96,14 +99,21 @@ public class PostOffice implements FilePaths{
      * @throws RuntimeException General unchecked exception
      */
     private static void exportDeliveries() throws IOException, RuntimeException {
+        Set<Advertisement> ads = new HashSet<>();
+
         for (Delivery delivery : deliveries) {
             if (delivery instanceof Parcel parcel1) {
                 exportParcels(parcel1);
             }
             if (delivery instanceof Mail mail1) {
+                if (mail1 instanceof Advertisement ad) {
+                    ads.add(ad);
+                }
                 exportMails(mail1);
             }
         }
+
+        exportCompanyAdvertisements(ads);
     }
 
     /**
@@ -137,25 +147,16 @@ public class PostOffice implements FilePaths{
      */
     private static void exportMails(Mail mail) throws IOException, RuntimeException {
         File mailPath = new File(MAILS_FILE_PATH);
-        Set<Advertisement> companyAdvertisements = new HashSet<>();
 
-        if (mail instanceof Advertisement ad) {
-            companyAdvertisements.add(ad);
-        }
-        else {
-            try (FileWriter fw = new FileWriter(mailPath)) {
-                fw.write(mail.getTitle() + ",");
-                fw.write(mail.getAddress() + ",");
-                fw.write(mail.getDescription() + ",");
-                fw.write(mail.getArrivalTime().toString() + ",");
-                fw.write(mail.getStatus().toString() + "\n" );
-            }
-        }
+        try (FileWriter fw = new FileWriter(mailPath)) {
+            fw.write(mail.getTitle() + ",");
+            fw.write(mail.getAddress() + ",");
+            fw.write(mail.getDescription() + ",");
+            fw.write(mail.getArrivalTime().toString() + ",");
+            fw.write(mail.getStatus().toString() + "\n" );
 
-        exportCompanyAdvertisements(companyAdvertisements);
+        }
     }
-
-    //TODO : Separate
 
     /**
      * inner function for exportMails() function that includes each unique Advertisement
@@ -226,8 +227,8 @@ public class PostOffice implements FilePaths{
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private static void exportTickets() throws IOException, RuntimeException {
-        File ticketPath = new File(TICKET_FILE_PATH);
+    private static void exportTickets(String path, Collection<Ticket> tickets) throws IOException, RuntimeException {
+        File ticketPath = new File(path);
 
         try (FileWriter fw = new FileWriter(ticketPath)) {
             for (Ticket ticket : tickets) {
@@ -249,8 +250,34 @@ public class PostOffice implements FilePaths{
     }
 
     /**
+     * calls exportTickets() function to export all OPEN Tickets in the post-center
+     * @throws IOException Output data exceptions during writing data
+     * @throws RuntimeException General unchecked exception
+     */
+    private static void exportOpenedTickets() throws IOException, RuntimeException {
+        exportTickets(OPENEDTICKETS_FILE_PATH, openedTickets);
+    }
+
+    /**
+     * calls exportTickets() function to export all PROCESSING Tickets in the post-center
+     * @throws IOException Output data exceptions during writing data
+     * @throws RuntimeException General unchecked exception
+     */
+    private static void exportOngoingTickets() throws IOException, RuntimeException {
+        exportTickets(ONGOINGTICKETS_FILE_PATH, openedTickets);
+    }
+
+    /**
+     * calls exportTickets() function to export all CLOSED Tickets in the post-center
+     * @throws IOException Output data exceptions during writing data
+     * @throws RuntimeException General unchecked exception
+     */
+    private static void exportCompletedTickets() throws IOException, RuntimeException {
+        exportTickets(COMPLETEDTICKETs_FILE_PATH, completedTickets);
+    }
+
+    /**
      * loads all registered data from Resource file
-     * @return the Post-Office with all registered data
      */
     private static void importData() {
         try {
@@ -263,7 +290,9 @@ public class PostOffice implements FilePaths{
             advertisements = importAdvertisements();
             clients = importClients();
             staffs = importStaffs();
-            tickets = importTickets();
+            importOpenedTickets();
+            importOngoingTickets();
+            importCompletedTickets();
         }
         catch (RuntimeException e) {
             System.out.println(e.getMessage());
@@ -471,13 +500,32 @@ public class PostOffice implements FilePaths{
     }
 
     /**
-     * inner function for importData() that imports all Ticket data from Tickets.csv
-     * @return a List of Ticket containing all the opened, processed or closed tickets in the post-office
+     * inner function for importData() that imports all OPEN Ticket data from Tickets.csv
      * @throws RuntimeException general unchecked exception
      */
-    private static Set<Ticket> importTickets() throws RuntimeException{
-        File ticketPath = new File(TICKET_FILE_PATH);
-        List<Ticket> tickets = new HashSet<>();
+    private static void importOpenedTickets() throws RuntimeException{
+        importTickets(OPENEDTICKETS_FILE_PATH);
+    }
+
+    /**
+     * inner function for importData() that imports all OPEN Ticket data from Tickets.csv
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void importOngoingTickets() throws RuntimeException{
+        importTickets(ONGOINGTICKETS_FILE_PATH);
+        distributeTicketsToStaff();
+    }
+
+    /**
+     * inner function for importData() that imports all CLOSED Tickets from Completed_Tickets.csv
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void importCompletedTickets() throws RuntimeException{
+        importTickets(COMPLETEDTICKETs_FILE_PATH);
+    }
+
+    private static void importTickets(String path) throws RuntimeException{
+        File ticketPath = new File(path);
 
         try (Scanner input = new Scanner(ticketPath)) {
             while (input.hasNextLine()) {
@@ -488,25 +536,46 @@ public class PostOffice implements FilePaths{
                 Ticket.Type type = (ticketLine[2].equalsIgnoreCase("BUGREPORT")) ?
                         Ticket.Type.BUGREPORT : Ticket.Type.SUPPORT;
                 String detail = ticketLine[3];
-                Ticket.TicketStatus status =
-                        switch (ticketLine[4].toLowerCase()) {
-                        case "processing" -> Ticket.TicketStatus.PROCESSING;
-                        case "closed" -> Ticket.TicketStatus.CLOSED;
-                        default -> Ticket.TicketStatus.OPEN;
-                        };
+                Ticket.TicketStatus status = switch (ticketLine[4].toLowerCase()) {
+                    case "processing" -> Ticket.TicketStatus.PROCESSING;
+                    case "closed" -> Ticket.TicketStatus.CLOSED;
+                    default -> Ticket.TicketStatus.OPEN;
+                };
                 String clientId = ticketLine[5];
                 String staffId = (ticketLine[6].isBlank()) ? null : ticketLine[6];
                 LocalDateTime creationTime = LocalDateTime.parse(ticketLine[7]);
 
-                tickets.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
+                if (status.toString().equalsIgnoreCase("open")) {
+                    openedTickets.offer(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, null, creationTime));
+                }
+                if (status.toString().equalsIgnoreCase("processing") && staffId != null) {
+                    ongoingTickets.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
+                }
+                if (status.toString().equalsIgnoreCase("closed")  && staffId != null) {
+                    completedTickets.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
+                }
             }
         } catch (FileNotFoundException fnfe) {
-            handler(fnfe, TICKET_FILE_PATH);
+            handler(fnfe, path);
         }
-
-        return tickets;
     }
 
+    /**
+     * distributes registered PROCESSING tickets to their respective staff
+     */
+    private static void distributeTicketsToStaff() {
+        for (Ticket ticket : ongoingTickets) {
+            if (searchStaff(ticket.getStaff().staffId) != null) {
+                searchStaff(ticket.getStaff().staffId).getOngoingTickets().add(ticket);
+            }
+        }
+    }
+
+    /**
+     * finds the Client with the given id in the List of clients
+     * @param clientId the id of the targeted client
+     * @return the client with the given id
+     */
     public static Client searchClient(Integer clientId) {
         if (clients == null || clients.isEmpty() || clientId == null) {
             return null;
@@ -523,6 +592,11 @@ public class PostOffice implements FilePaths{
         return null;
     }
 
+    /**
+     * finds the Client with the given name in the List of clients
+     * @param name the name of the targeted client
+     * @return the client with the given name
+     */
     public static Client searchClient(String name) {
         if (clients == null || clients.isEmpty() || name == null || name.isBlank()) {
             return null;
@@ -539,6 +613,11 @@ public class PostOffice implements FilePaths{
         return null;
     }
 
+    /**
+     * finds the Staff with the given id in the List of staffs
+     * @param staffId the id of the targeted staff
+     * @return the staff with the given id
+     */
     public static Staff searchStaff(Integer staffId) {
         if (staffs == null || staffs.isEmpty() || staffId == null) {
             return null;
@@ -555,6 +634,11 @@ public class PostOffice implements FilePaths{
         return null;
     }
 
+    /**
+     * finds the Staff with the given name in the List of staffs
+     * @param name the name of the targeted staff
+     * @return the staff with the given name
+     */
     public static Staff searchStaff(String name) {
         if (staffs == null || staffs.isEmpty() || name == null || name.isBlank()) {
             return null;

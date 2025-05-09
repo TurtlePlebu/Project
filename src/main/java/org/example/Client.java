@@ -67,6 +67,8 @@ public class Client extends User implements Registerable {
         return !PostOffice.deliveries.contains(del);
     }
 
+
+
     @Override
     public String toString() {
         return String.format("Client :\n" +
