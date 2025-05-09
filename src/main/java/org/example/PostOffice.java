@@ -8,51 +8,49 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class PostOffice implements FilePaths{
-    private String name;
-    private String address;
-    private String email;
-    private List<Delivery> deliveries;
-    private List<Advertisement> advertisements;
-    private List<Ticket> tickets;
-    private List<Client> clients;
-    private List<Staff> staffs;
-    private Manager manager;
+    protected static String name;
+    protected static String address;
+    protected static String email;
+    protected static List<Delivery> deliveries;
+    protected static List<Advertisement> advertisements;
+    protected static Set<Ticket> tickets;
+    protected static List<Client> clients;
+    protected static List<Staff> staffs;
+    protected static Manager manager;
 
-    //TODO : Update the files' path & default constructor that loads registered data
-    //TODO : Move files' path
     public PostOffice() {
         // load the data
         importData();
     }
 
-    public PostOffice(String name, String address, String email, Manager manager) {
-        this.name = name;
-        this.address = address;
-        this.email = email;
-        this.manager = manager;
-        this.deliveries = new ArrayList<>();
-        this.advertisements = new ArrayList<>();
-        this.tickets= new ArrayList<>();
-        this.clients = new ArrayList<>();
-        this.staffs = new ArrayList<>();
-    }
-
-    public PostOffice(String name, String address, String email, List<Delivery> deliveries, List<Advertisement> advertisements, List<Ticket> tickets, List<Client> clients, List<Staff> staffs, Manager manager) {
-        this.name = name;
-        this.address = address;
-        this.email = email;
-        this.deliveries = deliveries;
-        this.advertisements = advertisements;
-        this.tickets = tickets;
-        this.clients = clients;
-        this.staffs = staffs;
-        this.manager = manager;
-    }
+//    public PostOffice(String name, String address, String email, Manager manager) {
+//        this.name = name;
+//        this.address = address;
+//        this.email = email;
+//        this.manager = manager;
+//        this.deliveries = new ArrayList<>();
+//        this.advertisements = new ArrayList<>();
+//        this.tickets= new ArrayList<>();
+//        this.clients = new ArrayList<>();
+//        this.staffs = new ArrayList<>();
+//    }
+//
+//    public PostOffice(String name, String address, String email, List<Delivery> deliveries, List<Advertisement> advertisements, List<Ticket> tickets, List<Client> clients, List<Staff> staffs, Manager manager) {
+//        this.name = name;
+//        this.address = address;
+//        this.email = email;
+//        this.deliveries = deliveries;
+//        this.advertisements = advertisements;
+//        this.tickets = tickets;
+//        this.clients = clients;
+//        this.staffs = staffs;
+//        this.manager = manager;
+//    }
 
     /**
      * exports all current data inside the post-center into their appropriate files in Resources
      */
-    public void exportData() {
+    public static void exportData() {
         try {
             exportPostOfficeInfo();
             exportDeliveries();
@@ -61,9 +59,11 @@ public class PostOffice implements FilePaths{
             exportTickets();
 
         } catch (IOException e) {
-            //TODO : add message
-            throw new RuntimeException(e);
-
+            System.out.println("Could not write all the data");
+            System.out.println(e.getMessage());
+            for (StackTraceElement trace : e.getStackTrace()) {
+                System.out.println(trace.toString());
+            }
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
             for (StackTraceElement trace : e.getStackTrace()) {
@@ -77,7 +77,7 @@ public class PostOffice implements FilePaths{
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private void exportPostOfficeInfo() throws IOException, RuntimeException {
+    private static void exportPostOfficeInfo() throws IOException, RuntimeException {
         File file = new File(POSTCENTER_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(file)) {
@@ -95,7 +95,7 @@ public class PostOffice implements FilePaths{
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private void exportDeliveries() throws IOException, RuntimeException {
+    private static void exportDeliveries() throws IOException, RuntimeException {
         for (Delivery delivery : deliveries) {
             if (delivery instanceof Parcel parcel1) {
                 exportParcels(parcel1);
@@ -112,7 +112,7 @@ public class PostOffice implements FilePaths{
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private void exportParcels(Parcel parcel) throws IOException, RuntimeException {
+    private static void exportParcels(Parcel parcel) throws IOException, RuntimeException {
         File parcelFile = new File(PARCELS_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(parcelFile)) {
@@ -135,7 +135,7 @@ public class PostOffice implements FilePaths{
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private void exportMails(Mail mail) throws IOException, RuntimeException {
+    private static void exportMails(Mail mail) throws IOException, RuntimeException {
         File mailPath = new File(MAILS_FILE_PATH);
         Set<Advertisement> companyAdvertisements = new HashSet<>();
 
@@ -163,7 +163,7 @@ public class PostOffice implements FilePaths{
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private void exportCompanyAdvertisements(Set<Advertisement> ads) throws IOException, RuntimeException {
+    private static void exportCompanyAdvertisements(Set<Advertisement> ads) throws IOException, RuntimeException {
         if (ads.isEmpty()) {
             return;
         }
@@ -190,7 +190,7 @@ public class PostOffice implements FilePaths{
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private void exportClients() throws IOException, RuntimeException {
+    private static void exportClients() throws IOException, RuntimeException {
         File clientPath = new File(CLIENT_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(clientPath)) {
@@ -208,7 +208,7 @@ public class PostOffice implements FilePaths{
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private void exportStaffs() throws IOException, RuntimeException {
+    private static void exportStaffs() throws IOException, RuntimeException {
         File staffPath = new File(STAFF_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(staffPath)) {
@@ -226,7 +226,7 @@ public class PostOffice implements FilePaths{
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private void exportTickets() throws IOException, RuntimeException {
+    private static void exportTickets() throws IOException, RuntimeException {
         File ticketPath = new File(TICKET_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(ticketPath)) {
@@ -236,12 +236,12 @@ public class PostOffice implements FilePaths{
                 fw.write(ticket.getType().toString() + ",");
                 fw.write(ticket.getDetail() + ",");
                 fw.write(ticket.getTicketStatus().toString() + ",");
-                fw.write(ticket.getClient().getName() + ",");
+                fw.write(ticket.getClient().getClientId() + ",");
                 if (ticket.getStaff() == null) {
                     fw.write(" ,");
                 }
                 else {
-                    fw.write(ticket.getStaff().getName() + ",");
+                    fw.write(ticket.getStaff().getStaffId() + ",");
                 }
                 fw.write(ticket.getCreationTime().toString() + "\n");
             }
@@ -252,18 +252,18 @@ public class PostOffice implements FilePaths{
      * loads all registered data from Resource file
      * @return the Post-Office with all registered data
      */
-    private void importData() {
+    private static void importData() {
         try {
             String[] info = importPostOfficeInfo();
-            this.name = info[0];
-            this.address = info[1];
-            this.email = info[2];
-            this.manager = new Manager(info[3], info[4]);
-            this.deliveries = importDeliveries();
-            this.advertisements = importAdvertisements();
-            this.clients = importClients();
-            this.staffs = importStaffs();
-            this.tickets = importTickets();
+            name = info[0];
+            address = info[1];
+            email = info[2];
+            manager = new Manager(info[3], info[4]);
+            deliveries = importDeliveries();
+            advertisements = importAdvertisements();
+            clients = importClients();
+            staffs = importStaffs();
+            tickets = importTickets();
         }
         catch (RuntimeException e) {
             System.out.println(e.getMessage());
@@ -279,7 +279,7 @@ public class PostOffice implements FilePaths{
      * @param fnfe the FileNotFoundException
      * @param fileName the filepath name
      */
-    private void handler(FileNotFoundException fnfe, String fileName) {
+    private static void handler(FileNotFoundException fnfe, String fileName) {
         String message = String.format("Cannot find %s", fileName);
         System.out.println(message);
         System.out.println(fnfe.getMessage());
@@ -293,7 +293,7 @@ public class PostOffice implements FilePaths{
      * @return a String array containing the shared information of the post-office
      * @throws RuntimeException general unchecked exception
      */
-    private String[] importPostOfficeInfo()  throws RuntimeException {
+    private static String[] importPostOfficeInfo()  throws RuntimeException {
         File file = new File(POSTCENTER_FILE_PATH);
 
         String[] info = new String[]{};
@@ -313,7 +313,7 @@ public class PostOffice implements FilePaths{
      * @return a List of Delivery containing all the deliveries in the post-office
      * @throws RuntimeException general unchecked exception
      */
-    private List<Delivery> importDeliveries() throws RuntimeException {
+    private static List<Delivery> importDeliveries() throws RuntimeException {
         List<Delivery> deliveries = new ArrayList<>();
 
         for (Delivery delivery : importParcels()) {
@@ -331,7 +331,7 @@ public class PostOffice implements FilePaths{
      * @return a List of Delivery containing all the parcels in the post-office
      * @throws RuntimeException general unchecked exception
      */
-    private List<Delivery> importParcels() throws RuntimeException {
+    private static List<Delivery> importParcels() throws RuntimeException {
         File parcelFile = new File(PARCELS_FILE_PATH);
         List<Delivery> parcels = new ArrayList<>();
 
@@ -365,7 +365,7 @@ public class PostOffice implements FilePaths{
      * @return a List of Delivery containing all the mails in the post-office
      * @throws RuntimeException general unchecked exception
      */
-    private List<Delivery> importMails() throws RuntimeException {
+    private static List<Delivery> importMails() throws RuntimeException {
         File mailPath = new File(MAILS_FILE_PATH);
         List<Delivery> mails = new ArrayList<>();
 
@@ -390,7 +390,7 @@ public class PostOffice implements FilePaths{
         return mails;
     }
 
-    private List<Advertisement> importAdvertisements() {
+    private static List<Advertisement> importAdvertisements() {
         File adPath = new File(COMPANYADVERTISEMENTS_FILE_PATH);
         List<Advertisement> ads = new ArrayList<>();
 
@@ -415,7 +415,7 @@ public class PostOffice implements FilePaths{
      * @return a List of Client containing all the clients in the post-office
      * @throws RuntimeException general unchecked exception
      */
-    private List<Client> importClients() throws RuntimeException {
+    private static List<Client> importClients() throws RuntimeException {
         File clientPath = new File(CLIENT_FILE_PATH);
         List<Client> clients = new ArrayList<>();
 
@@ -442,7 +442,7 @@ public class PostOffice implements FilePaths{
      * @return a List of Staff containing all the staffs in the post-office
      * @throws RuntimeException general unchecked exception
      */
-    private List<Staff> importStaffs() throws RuntimeException {
+    private static List<Staff> importStaffs() throws RuntimeException {
         File staffPath = new File(STAFF_FILE_PATH);
         List<Staff> staffs = new ArrayList<>();
 
@@ -475,9 +475,9 @@ public class PostOffice implements FilePaths{
      * @return a List of Ticket containing all the opened, processed or closed tickets in the post-office
      * @throws RuntimeException general unchecked exception
      */
-    private List<Ticket> importTickets() throws RuntimeException{
+    private static Set<Ticket> importTickets() throws RuntimeException{
         File ticketPath = new File(TICKET_FILE_PATH);
-        List<Ticket> tickets = new ArrayList<>();
+        List<Ticket> tickets = new HashSet<>();
 
         try (Scanner input = new Scanner(ticketPath)) {
             while (input.hasNextLine()) {
@@ -494,11 +494,11 @@ public class PostOffice implements FilePaths{
                         case "closed" -> Ticket.TicketStatus.CLOSED;
                         default -> Ticket.TicketStatus.OPEN;
                         };
-                String clientName = ticketLine[5];
-                String staffName = (ticketLine[6].isBlank()) ? null : ticketLine[6];
+                String clientId = ticketLine[5];
+                String staffId = (ticketLine[6].isBlank()) ? null : ticketLine[6];
                 LocalDateTime creationTime = LocalDateTime.parse(ticketLine[7]);
 
-                tickets.add(new Ticket(title, detail, searchClient(clientName), type, status, searchStaff(staffName), creationTime));
+                tickets.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
             }
         } catch (FileNotFoundException fnfe) {
             handler(fnfe, TICKET_FILE_PATH);
@@ -507,82 +507,67 @@ public class PostOffice implements FilePaths{
         return tickets;
     }
 
-    //TODO : searchClient(clientName) & searchStaff()
+    public static Client searchClient(Integer clientId) {
+        if (clients == null || clients.isEmpty() || clientId == null) {
+            return null;
+        }
 
+        for (Client client : clients) {
+            if (client.getClientId() == clientId) {
+                return client;
+            }
+        }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        PostOffice that = (PostOffice) o;
-        return Objects.equals(name, that.name) && Objects.equals(address, that.address) && Objects.equals(email, that.email) && Objects.equals(deliveries, that.deliveries) && Objects.equals(tickets, that.tickets) && Objects.equals(clients, that.clients) && Objects.equals(staffs, that.staffs) && Objects.equals(manager, that.manager);
+        System.out.println("Did not find client with given ID");
+
+        return null;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, address, email, deliveries, tickets, clients, staffs, manager);
+    public static Client searchClient(String name) {
+        if (clients == null || clients.isEmpty() || name == null || name.isBlank()) {
+            return null;
+        }
+
+        for (Client client : clients) {
+            if (client.getName().equalsIgnoreCase(name)) {
+                return client;
+            }
+        }
+
+        System.out.println("Did not find client with given name");
+
+        return null;
     }
 
-    public String getName() {
-        return name;
+    public static Staff searchStaff(Integer staffId) {
+        if (staffs == null || staffs.isEmpty() || staffId == null) {
+            return null;
+        }
+
+        for (Staff staff : staffs) {
+            if (staff.getStaffId() == staffId) {
+                return staff;
+            }
+        }
+
+        System.out.println("Did not find staff with given ID");
+
+        return null;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public static Staff searchStaff(String name) {
+        if (staffs == null || staffs.isEmpty() || name == null || name.isBlank()) {
+            return null;
+        }
 
-    public String getAddress() {
-        return address;
-    }
+        for (Staff staff : staffs) {
+            if (staff.getName().equalsIgnoreCase(name)) {
+                return staff;
+            }
+        }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+        System.out.println("Did not find staff with given name");
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<Delivery> getDeliveries() {
-        return deliveries;
-    }
-
-    public void setDeliveries(List<Delivery> deliveries) {
-        this.deliveries = deliveries;
-    }
-
-    public List<Ticket> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
-    }
-
-    public List<Client> getClients() {
-        return clients;
-    }
-
-    public void setClients(List<Client> clients) {
-        this.clients = clients;
-    }
-
-    public List<Staff> getStaffs() {
-        return staffs;
-    }
-
-    public void setStaffs(List<Staff> staffs) {
-        this.staffs = staffs;
-    }
-
-    public Manager getManager() {
-        return manager;
-    }
-
-    public void setManager(Manager manager) {
-        this.manager = manager;
+        return null;
     }
 }

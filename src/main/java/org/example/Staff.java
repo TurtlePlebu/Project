@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.Objects;
 
-public class Staff extends User{
+public class Staff extends User implements Registerable {
     protected static int nextId = 0;
 
     protected int staffId;
@@ -16,17 +16,29 @@ public class Staff extends User{
 
     @Override
     public void register() {
-
+        PostOffice.staffs.add(this);
+        PostOffice.exportData();
     }
 
     @Override
     public void viewDelivery() {
-
+        for (Delivery delivery : PostOffice.deliveries) {
+            if (delivery instanceof Parcel p) {
+                System.out.printf("Parcel : %s", p);
+            }
+            if (delivery instanceof Mail m) {
+                System.out.printf("Message : %s", m);
+            }
+        }
     }
 
     @Override
-    public void receiveDelivery(Delivery del) {
+    public boolean receiveDelivery(Delivery del) {
+        if (!PostOffice.deliveries.contains(del)) {
+            PostOffice.deliveries.add(del);
+        }
 
+        return !PostOffice.deliveries.contains(del);
     }
 
     public static enum Role {

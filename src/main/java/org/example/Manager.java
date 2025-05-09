@@ -13,19 +13,38 @@ public class Manager extends User{
     }
 
     @Override
-    public void register() {
-
-
-    }
-
-    @Override
     public void viewDelivery() {
-
+        for (Delivery delivery : PostOffice.deliveries) {
+            if (delivery instanceof Parcel p) {
+                System.out.printf("Parcel : %s", p);
+            }
+            if (delivery instanceof Mail m) {
+                System.out.printf("Message : %s", m);
+            }
+        }
     }
 
-    @Override
-    public void receiveDelivery(Delivery del) {
+    protected void viewStaff() {
+        for (Staff staff : PostOffice.staffs) {
+            if (staff instanceof Courier c) {
+                System.out.printf("Courier : %s", c);
+            }
+            else {
+                System.out.printf("Staff : %s", staff);
+            }
+        }
+    }
 
+    protected Staff searchStaff(String name) {
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+
+        return PostOffice.searchStaff(name);
+    }
+
+    protected Staff searchStaff(int id) {
+        return searchStaff(id);
     }
 
     @Override

@@ -15,6 +15,17 @@ public class Courier extends Staff{
         this.deliveries = new ArrayList<>();
     }
 
+    @Override
+    public void viewDelivery() {
+        for (Delivery delivery : deliveries) {
+            if (delivery instanceof Parcel p) {
+                System.out.printf("Parcel : %s", p);
+            }
+            if (delivery instanceof Mail m) {
+                System.out.printf("Message : %s", m);
+            }
+        }
+    }
 
     @Override
     public boolean equals(Object o) {

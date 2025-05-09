@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Client extends User{
+public class Client extends User implements Registerable {
     private static int nextId = 0;
 
     private int clientId;
@@ -27,19 +27,44 @@ public class Client extends User{
 
     @Override
     public void register() {
-
+        PostOffice.clients.add(this);
+        PostOffice.exportData();
     }
 
     @Override
     public void viewDelivery() {
+        if (deliveries.isEmpty()) {
+            this.deliveries = PostOffice.deliveries.stream()
+                    .filter(client -> client.getAddress().equalsIgnoreCase(this.address))
+                    .toList();
+        }
 
+        for (Delivery delivery : deliveries) {
+            if (delivery instanceof Parcel p) {
+                System.out.printf("Parcel : %s", p);
+            }
+            if (delivery instanceof Mail m) {
+                System.out.printf("Message : %s", m);
+            }
+        }
+
+        for (Advertisement ad : PostOffice.advertisements) {
+            System.out.printf("Ad : %s", ad);
+        }
     }
 
     @Override
-    public void receiveDelivery(Delivery del) {
+    public boolean receiveDelivery(Delivery del) {
         if (del != null) {
             deliveries.add(del);
         }
+
+        if (!PostOffice.deliveries.contains(del)) {
+            PostOffice.deliveries.add(del);
+            PostOffice.exportData();
+        }
+
+        return !PostOffice.deliveries.contains(del);
     }
 
     @Override
