@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Staff extends User implements Registerable {
+public class Staff extends User implements Registerable, UsersViewing {
     protected static int nextId = 0;
 
     protected int staffId;
@@ -47,7 +47,14 @@ public class Staff extends User implements Registerable {
         return !PostOffice.deliveries.contains(del);
     }
 
-    public static class StaffComparator implements Comparator<Client> {
+    /**
+     * inner Comparator class sorting by:
+     * name ascendingly, then id ascendingly
+     * name descendingly, then id ascendingly
+     * id descendingly
+     * by default, id ascendingly
+     */
+    public static class StaffComparator implements Comparator<Staff> {
         private String type;
 
         public StaffComparator(String type) {
@@ -55,12 +62,12 @@ public class Staff extends User implements Registerable {
         }
 
         @Override
-        public int compare(Client o1, Client o2) {
+        public int compare(Staff o1, Staff o2) {
             return switch (type.toLowerCase()) {
-                case "name ascendingly" -> o1.getName().compareTo(o2.getName()) * 100 + (o1.getClientId() - o2.getClientId());
-                case "name descendingly" -> o2.getName().compareTo(o1.getName()) * 100 + (o1.getClientId() - o2.getClientId());
-                case "id descendingly" -> (o2.getClientId() - o1.getClientId());
-                default -> (o1.getClientId() + o2.getClientId());
+                case "name ascendingly" -> o1.getName().compareTo(o2.getName()) * 100 + (o1.getStaffId() - o2.getStaffId());
+                case "name descendingly" -> o2.getName().compareTo(o1.getName()) * 100 + (o1.getStaffId() - o2.getStaffId());
+                case "id descendingly" -> (o2.getStaffId() - o1.getStaffId());
+                default -> (o1.getStaffId() + o2.getStaffId());
             };
         }
     }

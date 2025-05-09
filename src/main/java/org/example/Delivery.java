@@ -24,6 +24,11 @@ public abstract class Delivery {
         this.status = status;
     }
 
+    /**
+     * inner Comparator class sorting by:
+     * the arrival time of the Delivery descendingly
+     * by default, the arrival time of the Delivery ascendingly
+     */
     public static class DeliveryComparator implements Comparator<Delivery> {
         private String type;
 

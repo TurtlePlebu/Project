@@ -23,14 +23,22 @@ public class Client extends User implements Registerable {
         this.deliveries = deliveries;
     }
 
+    /**
+     * registers the client to the Post-Office system
+     * updates the Post-Office data afterward
+     */
     @Override
     public void register() {
         PostOffice.clients.add(this);
         PostOffice.exportData();
     }
 
+    /**
+     * displays all the deliveries and advertisements with this Client's address
+     * @param sorting the format of the display
+     */
     @Override
-    public void viewDelivery(String type) {
+    public void viewDelivery(String sorting) {
         if (deliveries.isEmpty()) {
             this.deliveries = PostOffice.deliveries.stream()
                     .filter(client -> client.getAddress().equalsIgnoreCase(this.address))
@@ -54,6 +62,12 @@ public class Client extends User implements Registerable {
 
     }
 
+    /**
+     * adds a Delivery in the Client's list of Delivery
+     * and adds the Delivery to the Post-Office's data if not already existed
+     * @param del the receiving Delivery
+     * @return a true or false value indicating the success of the operation
+     */
     @Override
     public boolean receiveDelivery(Delivery del) {
         if (del != null) {
@@ -68,6 +82,13 @@ public class Client extends User implements Registerable {
         return !PostOffice.deliveries.contains(del);
     }
 
+    /**
+     * inner Comparator class sorting by:
+     * name ascendingly, then id ascendingly
+     * name descendingly, then id ascendingly
+     * id descendingly
+     * by default, id ascendingly
+     */
     public static class ClientComparator implements Comparator<Client> {
         private String type;
 

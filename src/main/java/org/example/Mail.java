@@ -18,6 +18,13 @@ public class Mail extends Delivery {
         this.title = title;
     }
 
+    /**
+     * inner Comparator class sorting by:
+     * the title ascendingly, then the arrival time of the Delivery ascendingly
+     * the title descendingly, then the arrival time of the Delivery ascendingly
+     * the arrival time of the Delivery descendingly, then the title ascendingly
+     * by default, the arrival time of the Delivery ascendingly, then the title ascendingly
+     */
     public static class MailComparator implements Comparator<Mail> {
         private String type;
 

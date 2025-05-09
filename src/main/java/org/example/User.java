@@ -11,7 +11,11 @@ public abstract class User {
         this.email = email;
     }
 
-    public abstract void viewDelivery(String type);
+    /**
+     * displays all the deliveries of the User
+     * @param sorting the format of the display
+     */
+    public abstract void viewDelivery(String sorting);
 
     @Override
     public String toString() {

@@ -20,6 +20,13 @@ public class Parcel extends Delivery{
         this.courier = courier;
     }
 
+    /**
+     * inner Comparator class sorting by:
+     * the title ascendingly, then the arrival time of the Delivery ascendingly
+     * the title descendingly, then the arrival time of the Delivery ascendingly
+     * the arrival time of the Delivery descendingly, then the title ascendingly
+     * by default, the arrival time of the Delivery ascendingly, then the title ascendingly
+     */
     public static class ParcelComparator implements Comparator<Parcel> {
         private String type;
 

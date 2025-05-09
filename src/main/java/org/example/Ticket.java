@@ -38,6 +38,13 @@ public class Ticket {
         this.creationTime = creationTime;
     }
 
+    /**
+     * inner Comparator class sorting by:
+     * the creation time of the Ticket ascendingly, then id ascendingly
+     * the creation time of the Ticket descendingly, then id ascendingly
+     * id descendingly
+     * by default, id ascendingly
+     */
     public static class TicketComparator implements Comparator<Ticket> {
         private String type;
 

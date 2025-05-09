@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.Objects;
 
-public class Manager extends User{
+public class Manager extends User implements UsersViewing {
     private static int nextID = 0;
 
     private int managerId;
@@ -13,9 +13,9 @@ public class Manager extends User{
     }
 
     @Override
-    public void viewDelivery(String type) {
+    public void viewDelivery(String sorting) {
 
-        PostOffice.deliveries.sort(new Delivery.DeliveryComparator(type));
+        PostOffice.deliveries.sort(new Delivery.DeliveryComparator(sorting));
 
         for (Delivery delivery : PostOffice.deliveries) {
             if (delivery instanceof Parcel p) {
@@ -23,17 +23,6 @@ public class Manager extends User{
             }
             if (delivery instanceof Mail m) {
                 System.out.printf("Message : %s", m);
-            }
-        }
-    }
-
-    protected void viewStaff() {
-        for (Staff staff : PostOffice.staffs) {
-            if (staff instanceof Courier c) {
-                System.out.printf("Courier : %s", c);
-            }
-            else {
-                System.out.printf("Staff : %s", staff);
             }
         }
     }

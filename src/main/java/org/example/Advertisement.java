@@ -13,6 +13,11 @@ public class Advertisement extends Mail implements Comparable<Advertisement> {
         this.companyName = companyName;
     }
 
+    /**
+     * naturally sorts the advertisements by company names
+     * @param o the object to be compared.
+     * @return
+     */
     @Override
     public int compareTo(Advertisement o) {
         return this.companyName.compareTo(o.companyName);
