@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +25,9 @@ public class Staff extends User implements Registerable {
     }
 
     @Override
-    public void viewDelivery() {
+    public void viewDelivery(String type) {
+        PostOffice.deliveries.sort(new Delivery.DeliveryComparator(type));
+
         for (Delivery delivery : PostOffice.deliveries) {
             if (delivery instanceof Parcel p) {
                 System.out.printf("Parcel : %s", p);
@@ -42,6 +45,24 @@ public class Staff extends User implements Registerable {
         }
 
         return !PostOffice.deliveries.contains(del);
+    }
+
+    public static class StaffComparator implements Comparator<Client> {
+        private String type;
+
+        public StaffComparator(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public int compare(Client o1, Client o2) {
+            return switch (type.toLowerCase()) {
+                case "name ascendingly" -> o1.getName().compareTo(o2.getName()) * 100 + (o1.getClientId() - o2.getClientId());
+                case "name descendingly" -> o2.getName().compareTo(o1.getName()) * 100 + (o1.getClientId() - o2.getClientId());
+                case "id descendingly" -> (o2.getClientId() - o1.getClientId());
+                default -> (o1.getClientId() + o2.getClientId());
+            };
+        }
     }
 
     public static enum Role {

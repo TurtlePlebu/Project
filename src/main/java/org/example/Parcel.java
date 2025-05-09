@@ -1,6 +1,7 @@
 package org.example;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class Parcel extends Delivery{
@@ -9,20 +10,32 @@ public class Parcel extends Delivery{
     private int parcelId;
     private Item item;
     private int quantity;
+    private Courier courier;
 
-    public Parcel(String address, String description, LocalDateTime arrivalTime, Status status, Item item, int quantity) {
+    public Parcel(String address, String description, LocalDateTime arrivalTime, Status status, Item item, int quantity, Courier courier) {
         super(address, description, arrivalTime, status);
         this.parcelId = nextId++;
         this.item = item;
         this.quantity = quantity;
+        this.courier = courier;
     }
 
-    public Parcel(String address, String description, LocalDateTime arrivalTime, Item item, int quantity) {
-        super(address, description, arrivalTime);
-        this.parcelId = nextId++;
-        this.item = item;
-        this.quantity = quantity;
-        this.status = Delivery.Status.ONGOING;
+    public static class ParcelComparator implements Comparator<Parcel> {
+        private String type;
+
+        public ParcelComparator(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public int compare(Parcel o1, Parcel o2) {
+            return switch (type) {
+                case "title ascendingly" -> (o1.getParcelId() - o2.getParcelId()) * 100 + (o1.getArrivalTime().compareTo(o2.getArrivalTime()));
+                case "title descendingly" -> (o2.getParcelId() - o1.getParcelId()) * 100 + (o1.getArrivalTime().compareTo(o2.getArrivalTime()));
+                case "time descendingly" -> (o2.getArrivalTime().compareTo(o1.getArrivalTime())) * 100 + (o1.getParcelId() - o2.getParcelId());
+                default -> (o1.getArrivalTime().compareTo(o2.getArrivalTime())) * 100 + (o1.getParcelId() - o2.getParcelId());
+            };
+        }
     }
 
     @Override
@@ -50,6 +63,14 @@ public class Parcel extends Delivery{
 
     public void setParcelId(int parcelId) {
         this.parcelId = parcelId;
+    }
+
+    public Courier getCourier() {
+        return courier;
+    }
+
+    public void setCourier(Courier courier) {
+        this.courier = courier;
     }
 
     public Item getItem() {

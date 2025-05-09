@@ -1,9 +1,10 @@
 package org.example;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 
-public class Mail extends Delivery{
+public class Mail extends Delivery {
 
     protected String title;
 
@@ -15,6 +16,24 @@ public class Mail extends Delivery{
     public Mail(String address, String description, LocalDateTime arrivalTime, Status status, String title) {
         super(address, description, arrivalTime, status);
         this.title = title;
+    }
+
+    public static class MailComparator implements Comparator<Mail> {
+        private String type;
+
+        public MailComparator(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public int compare(Mail o1, Mail o2) {
+            return switch (type.toLowerCase()) {
+                case "title ascendingly" -> (o1.getTitle().compareTo(o2.getTitle())) * 100 + (o1.getArrivalTime().compareTo(o2.getArrivalTime()));
+                case "title descendingly" -> (o2.getTitle().compareTo(o1.getTitle())) * 100 + (o1.getArrivalTime().compareTo(o2.getArrivalTime()));
+                case "time descendingly" -> (o2.getArrivalTime().compareTo(o1.getArrivalTime())) * 100 + (o1.getTitle().compareTo(o2.getTitle()));
+                default -> (o1.getArrivalTime().compareTo(o2.getArrivalTime())) * 100 + (o1.getTitle().compareTo(o2.getTitle()));
+            };
+        }
     }
 
     @Override

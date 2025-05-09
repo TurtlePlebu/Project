@@ -1,6 +1,7 @@
 package org.example;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 
 public abstract class Delivery {
@@ -21,6 +22,22 @@ public abstract class Delivery {
         this.description = description;
         this.arrivalTime = arrivalTime;
         this.status = status;
+    }
+
+    public static class DeliveryComparator implements Comparator<Delivery> {
+        private String type;
+
+        public DeliveryComparator(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public int compare(Delivery o1, Delivery o2) {
+            return switch (type.toLowerCase()) {
+                case "reverse" -> o2.getArrivalTime().compareTo(o1.getArrivalTime());
+                default -> o1.getArrivalTime().compareTo(o2.getArrivalTime());
+            };
+        }
     }
 
     public static enum Status {

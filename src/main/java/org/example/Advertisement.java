@@ -1,15 +1,21 @@
 package org.example;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 
-public class Advertisement extends Mail{
+public class Advertisement extends Mail implements Comparable<Advertisement> {
 
     private String companyName;
 
     public Advertisement(String description, LocalDateTime arrivalTime, String title, String companyName) {
         super(null, description, arrivalTime, title);
         this.companyName = companyName;
+    }
+
+    @Override
+    public int compareTo(Advertisement o) {
+        return this.companyName.compareTo(o.companyName);
     }
 
     @Override

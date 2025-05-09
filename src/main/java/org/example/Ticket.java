@@ -1,6 +1,7 @@
 package org.example;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class Ticket {
@@ -35,6 +36,24 @@ public class Ticket {
         this.ticketStatus = ticketStatus;
         this.staff = staff;
         this.creationTime = creationTime;
+    }
+
+    public static class TicketComparator implements Comparator<Ticket> {
+        private String type;
+
+        public TicketComparator(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public int compare(Ticket o1, Ticket o2) {
+            return switch (type.toLowerCase()) {
+                case "time ascendingly" -> o1.getCreationTime().compareTo(o2.getCreationTime()) * 100 + o1.getTicketId() - o2.getTicketId();
+                case "time descedingly" -> o2.getCreationTime().compareTo(o1.getCreationTime()) * 100 + o1.getTicketId() - o2.getTicketId();
+                case "id descendingly" -> o2.getTicketId() - o1.getTicketId();
+                default -> o1.getTicketId() - o2.getTicketId();
+            };
+        }
     }
 
     public static enum Type {

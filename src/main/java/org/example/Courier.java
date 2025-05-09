@@ -16,7 +16,9 @@ public class Courier extends Staff{
     }
 
     @Override
-    public void viewDelivery() {
+    public void viewDelivery(String type) {
+        deliveries.sort(new Delivery.DeliveryComparator(type));
+
         for (Delivery delivery : deliveries) {
             if (delivery instanceof Parcel p) {
                 System.out.printf("Parcel : %s", p);

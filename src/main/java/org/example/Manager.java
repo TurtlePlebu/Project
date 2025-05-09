@@ -13,7 +13,10 @@ public class Manager extends User{
     }
 
     @Override
-    public void viewDelivery() {
+    public void viewDelivery(String type) {
+
+        PostOffice.deliveries.sort(new Delivery.DeliveryComparator(type));
+
         for (Delivery delivery : PostOffice.deliveries) {
             if (delivery instanceof Parcel p) {
                 System.out.printf("Parcel : %s", p);

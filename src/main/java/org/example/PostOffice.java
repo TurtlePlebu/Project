@@ -134,7 +134,8 @@ public class PostOffice implements FilePaths{
             fw.write(parcel.getItem().getWeight() + ",");
             fw.write(parcel.getItem().getPurchasedTime().toString() + ",");
             fw.write(parcel.getArrivalTime().toString() + ",");
-            fw.write(parcel.getStatus().toString() + "\n");
+            fw.write(parcel.getStatus().toString() + ",");
+            fw.write(parcel.getCourier().getStaffId() + "\n");
         }
     }
 
@@ -378,8 +379,8 @@ public class PostOffice implements FilePaths{
                 LocalDateTime arrivalTime = LocalDateTime.parse(parcelLine[7]);
                 Delivery.Status status = (parcelLine[8].equalsIgnoreCase("DELIVERED")) ?
                         Delivery.Status.DELIVERED : Delivery.Status.ONGOING;
-
-                parcels.add(new Parcel(address, description, arrivalTime, status, new Item(itemName, itemWeight, itemTime), quantity));
+                int courierId = Integer.parseInt(parcelLine[9]);
+                parcels.add(new Parcel(address, description, arrivalTime, status, new Item(itemName, itemWeight, itemTime), quantity, (Courier) searchStaff(courierId)));
             }
 
         } catch (FileNotFoundException fnfe) {

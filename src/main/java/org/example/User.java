@@ -11,7 +11,7 @@ public abstract class User {
         this.email = email;
     }
 
-    public abstract void viewDelivery();
+    public abstract void viewDelivery(String type);
 
     @Override
     public String toString() {
