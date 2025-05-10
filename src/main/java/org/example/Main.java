@@ -7,6 +7,6 @@ public class Main {
 
         Scanner input = new Scanner(System.in);
 
-        int num = input.nextInt();
+        String num = input.next();
     }
 }

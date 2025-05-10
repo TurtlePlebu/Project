@@ -23,21 +23,21 @@ public class UserInterface {
             System.out.printf(
                     "[1] Register as a %s \n" +
                     "[2] Register as a %s \n" +
-                    "[3] Log in" +
+                    "[3] Log in\n" +
                     "[4] Exit \n\n"
                     ,"client"
                     ,"staff"
                     );
             try {
                 choice = input.nextInt();
-                if (choice > 4) {
+                if (choice > 4 || choice < 1) {
                     throw new InvalidNumberOptionException();
                 }
 
                 switch (choice) {
-                    case 1 -> clientRegisterMenu();
-                    case 2 -> staffRegisterMenu();
-                    case 3 -> loginMenu();
+                    case 1 -> clientRegisterMenu(); 
+                    case 2 -> staffRegisterMenu(); 
+                    case 3 -> login(); 
                     case 4 -> PostOffice.exportData();
                 }
 
@@ -45,7 +45,7 @@ public class UserInterface {
                 System.out.println("Please select the following options.\n");
 
             } catch (InputMismatchException ime) {
-                System.out.println("Please remove any symbols and enter a number.\n");
+                System.out.println("Please remove any symbols and enter an Integer.\n");
 
             } catch (RuntimeException re) {
                 System.out.println(re.getMessage());
@@ -64,7 +64,7 @@ public class UserInterface {
      * @return an String Array with name, email, and password to create a User
      * @throws RuntimeException general unchecked exception
      */
-    private static String[] registerMenu() throws RuntimeException{
+    private static String[] registerMenu() throws RuntimeException {
         boolean failed;
 
         String name = "";
@@ -127,7 +127,7 @@ public class UserInterface {
      * asks the user for the address
      * @throws RuntimeException general unchecked exception
      */
-    private static void clientRegisterMenu() throws RuntimeException{
+    private static void clientRegisterMenu() throws RuntimeException {
         String[] userInfo = registerMenu();
         boolean failed = false;
 
@@ -153,6 +153,13 @@ public class UserInterface {
         Client newClient = new Client(userInfo[1], userInfo[2], address);
         newClient.register(userInfo[3]);
         System.out.println("Registered!\n");
+    }
+
+    /**
+     * verifies if the user is logged in
+     */
+    private static void login() {
+        loginMenu();
     }
 
     /**
@@ -212,8 +219,283 @@ public class UserInterface {
         return password.equals(inputPassword);
     }
 
+    /**
+     * distinguishes the user between a client or a staff
+     */
+    private static void selectUserMenu() {
+        if (user instanceof Staff staff) {
+
+        }
+        if (user instanceof Client client) {
+            clientMenu(client);
+        }
+    }
+
+    /**
+     * displays all the possible actions of a client
+     * @param client the current client
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void clientMenu(Client client) throws RuntimeException {
+        int choice = 0;
+
+        do {
+            System.out.println(
+                    "[1] View delivery inbox\n" +
+                    "[2] Send mail\n" +
+                    "[3] Send parcel\n" +
+                    "[4] Remove delivery from inbox\n" +
+                    "[5] Create bug report\n" +
+                    "[6] Create support request\n" +
+                    "[7] Exit\n"
+            );
+            try {
+
+                choice = input.nextInt();
+
+                if (choice > 7 || choice < 1) {
+                    throw new InvalidNumberOptionException();
+                }
+
+                switch (choice) {
+                    case 1 -> viewDeliveryInbox(client); 
+                    case 2 -> createMail(client);
+                    case 3 -> createParcel(client);
+                    case 4 -> deleteDelivery(client);
+                    case 5 -> createBugReport(client);
+                    case 6 -> createSupportRequest(client);
+                    case 7 -> PostOffice.exportData();
+                }
+
+            } catch (InvalidNumberOptionException inoe) {
+                System.out.println("Please select the following options.\n");
+
+            } catch (InputMismatchException ime) {
+                System.out.println("Please remove any symbols and enter an Integer.\n");
+
+            }
+
+        } while (choice != 7);
+    }
+
+    /**
+     * inner functions that allows the user to display their deliveries
+     * @param u the current user
+     */
+    private static void viewDeliveryInbox(User u) throws RuntimeException {
+        int choice = 0;
+
+        do {
+            try {
+                System.out.println(
+                                "[1] Latest\n" +
+                                "[2] Reverse\n" +
+                                "[3] Exit\n"
+                );
+                choice = input.nextInt();
+
+                if (choice > 3 || choice < 1) {
+                    throw new InvalidNumberOptionException();
+                }
+
+                switch (choice) {
+                    case 1 -> u.viewDelivery("");
+                    case 2 -> u.viewDelivery("reverse");
+                }
+
+            } catch (InvalidNumberOptionException inoe) {
+                System.out.println("Please select the following options.\n");
+            } catch (InputMismatchException ime) {
+                System.out.println("Please remove any symbols and enter an Integer.\n");
+            }
+
+        } while (choice != 3) ;
+    }
+
+    /**
+     * inner function that allows the user to create and send a mail to another user
+     * @param u the current user
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void createMail(User u) throws RuntimeException {
+        boolean failed = false;
+
+        System.out.println("Enter a title :");
+        String title = input.nextLine();
+
+        System.out.println("Reply :");
+        String description = input.nextLine();
+
+        String email = "";
+
+        do {
+            try {
+                System.out.println("Receiver's email :");
+                 email = input.nextLine();
+
+                if (exitCheck(email)) {
+                    return;
+                }
+                if (!validEmail(email)) {
+                    throw new InvalidEmailException();
+                }
+                if (PostOffice.searchUser(email) == null) {
+                    throw new EmailNotFoundException();
+                }
 
 
+            } catch (InvalidEmailException iee) {
+                System.out.println("Email is invalid. Remove any symbol or whitespace.\n");
+                failed = true;
+            } catch (EmailNotFoundException enfe ) {
+                System.out.println("Cannot find email.\n");
+                failed = true;
+            }
+
+        } while (failed);
+
+        u.sendMail(description, title, email);
+    }
+
+    /**
+     * inner function that allows the user to create and send a Parcel to another user
+     * @param u the current user
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void createParcel(User u) throws RuntimeException {
+        boolean failed = false;
+
+        System.out.println("Enter the item name :");
+        String itemName = input.nextLine();
+
+        if (exitCheck(itemName)) {
+            return;
+        }
+
+        System.out.println("Detail :");
+        String detail = input.nextLine();
+
+        double weight = 0;
+        int quantity = 0;
+        String email = "";
+
+        do {
+            try {
+                System.out.println("Weight :");
+                String weightInput = input.next();
+
+                if (exitCheck(weightInput)) {
+                    return;
+                }
+                weight = Double.parseDouble(weightInput);
+
+                if (weight < 0) {
+                    throw new InvalidInputException();
+                }
+
+                System.out.println("Quantity :");
+                String quantityInput = input.next();
+
+                if (exitCheck(quantityInput)) {
+                    return;
+                }
+                quantity = Integer.parseInt(quantityInput);
+
+                if (quantity < 0) {
+                    throw new InvalidInputException();
+                }
+
+                System.out.println("Receiver's email :");
+                email = input.nextLine();
+
+                if (exitCheck(email)) {
+                    return;
+                }
+                if (!validEmail(email)) {
+                    throw new InvalidEmailException();
+                }
+                if (PostOffice.searchUser(email) == null) {
+                    throw new EmailNotFoundException();
+                }
+
+            } catch (InvalidInputException iie) {
+                System.out.println("Invalid number.");
+                failed = true;
+            } catch (InvalidEmailException iee) {
+                System.out.println("Email is invalid. Remove any symbol or whitespace.\n");
+                failed = true;
+            } catch (EmailNotFoundException enfe ) {
+                System.out.println("Cannot find email.\n");
+                failed = true;
+            }
+        } while (failed);
+
+        u.sendParcel(itemName, detail, weight, quantity, email);
+    }
+
+    /**
+     * inner function that allows the user to remove a Delivery from a user's inbox
+     * @param u the current user
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void deleteDelivery(User u) throws RuntimeException {
+        int choice = -1;
+
+        do {
+            u.viewDelivery("");
+
+            System.out.println("Choose a delivery to remove (Use a number of the display order starting from 0) : ");
+            String choiceInput = input.next();
+
+            if (exitCheck(choiceInput)) {
+                return;
+            }
+
+            choice = Integer.parseInt(choiceInput);
+        } while (choice < 0);
+
+        u.removeDelivery(u.getDeliveries().get(choice));
+    }
+
+    /**
+     * inner function that allows the client to create and send a bug report ticket to the staffs
+     * @param client the current client
+     * @throws RuntimeException general unchecked exception;
+     */
+    private static void createBugReport(Client client) throws RuntimeException {
+        System.out.println("Enter -10 to leave");
+        System.out.println("Enter a title : ");
+        String title = input.nextLine();
+
+        System.out.println("Enter details : ");
+        String detail = input.nextLine();
+
+        if (title.contains("-10") || detail.contains("-10")) {
+            return;
+        }
+
+        client.sendBugReport(title, detail);
+    }
+
+    /**
+     * inner function that allows the client to create and send a support request ticket to the staffs
+     * @param client the current client
+     * @throws RuntimeException general unchecked exception;
+     */
+    private static void createSupportRequest(Client client) throws RuntimeException {
+        System.out.println("Enter -10 to leave");
+        System.out.println("Enter a title : ");
+        String title = input.nextLine();
+
+        System.out.println("Enter details : ");
+        String detail = input.nextLine();
+
+        if (title.contains("-10") || detail.contains("-10")) {
+            return;
+        }
+
+        client.sendSupportRequest(title, detail);
+    }
     /**
      * checks if the String is spelled "exit"
      * @param str the given String
