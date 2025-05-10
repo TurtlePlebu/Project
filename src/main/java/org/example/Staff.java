@@ -1,15 +1,13 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public class Staff extends User implements Registerable, UsersViewing {
+public class Staff extends User implements Registerable, UsersDeliveryManaging {
     protected static int nextId = 0;
+    private static List<Parcel> processedParcels = new ArrayList<>();
 
     protected int staffId;
-    private List<Ticket> ongoingTickets = new ArrayList<>();
+    private Queue<Ticket> ongoingTickets = new PriorityQueue<>();
     protected Role role;
 
     public Staff(String name, String email) {
@@ -18,26 +16,49 @@ public class Staff extends User implements Registerable, UsersViewing {
         this.role = Staff.Role.INDOORS;
     }
 
+    /**
+     * gives the ONGOING Parcel to the assigned Courier
+     * @param c the assigned Courier to deliver the Parcel
+     * @param parcel the ONGOING Parcel
+     */
+    public void assignProcessedParcel(Courier c, Parcel parcel) {
+        for (Courier courier : searchCouriers()) {
+            if (courier.equals(c)) {
+                courier.pickupParcel(parcel);
+            }
+        }
+    }
+
+    /**
+     * answers the first Ticket in queue
+     * @param reply the reply of the Staff
+     */
+    public void replyTicket(String reply) {
+        Ticket ticket = ongoingTickets.poll();
+
+        sendMail(reply,ticket.getTitle(), ticket.getClient().getEmail());
+
+        ticket.setTicketStatus(Ticket.TicketStatus.CLOSED);
+        ticket.setStaff(this);
+
+        PostOffice.completedTickets.add(ticket);
+    }
+
+    /**
+     * registers the Staff to the Post-Office system
+     * updates the Post-Office data afterward
+     */
     @Override
     public void register() {
         PostOffice.staffs.add(this);
         PostOffice.exportData();
     }
 
-    @Override
-    public void viewDelivery(String type) {
-        PostOffice.deliveries.sort(new Delivery.DeliveryComparator(type));
-
-        for (Delivery delivery : PostOffice.deliveries) {
-            if (delivery instanceof Parcel p) {
-                System.out.printf("Parcel : %s", p);
-            }
-            if (delivery instanceof Mail m) {
-                System.out.printf("Message : %s", m);
-            }
-        }
-    }
-
+    /**
+     * adds a Delivery in the Post-Center's list of Delivery
+     * @param del the receiving Delivery
+     * @return a true or false value indicating the success of the operation
+     */
     @Override
     public boolean receiveDelivery(Delivery del) {
         if (!PostOffice.deliveries.contains(del)) {
@@ -117,7 +138,11 @@ public class Staff extends User implements Registerable, UsersViewing {
         this.role = role;
     }
 
-    public List<Ticket> getOngoingTickets() {
+    public Queue<Ticket> getOngoingTickets() {
         return ongoingTickets;
+    }
+
+    public static List<Parcel> getProcessedParcels() {
+        return processedParcels;
     }
 }

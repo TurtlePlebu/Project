@@ -8,8 +8,9 @@ public class Advertisement extends Mail implements Comparable<Advertisement> {
 
     private String companyName;
 
-    public Advertisement(String description, LocalDateTime arrivalTime, String title, String companyName) {
-        super(null, description, arrivalTime, title);
+    //the arrival time of the advertisement is the time when it is published
+    public Advertisement(String description, LocalDateTime published, String title, String companyName, String email) {
+        super(null, description, published, title, email);
         this.companyName = companyName;
     }
 

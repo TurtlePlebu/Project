@@ -7,15 +7,18 @@ import java.util.Objects;
 public class Mail extends Delivery {
 
     protected String title;
+    protected String email;
 
-    public Mail(String address, String description, LocalDateTime arrivalTime, String title) {
+    public Mail(String address, String description, LocalDateTime arrivalTime, String title, String email) {
         super(address, description, arrivalTime);
         this.title = title;
+        this.email = email;
     }
 
-    public Mail(String address, String description, LocalDateTime arrivalTime, Status status, String title) {
+    public Mail(String address, String description, LocalDateTime arrivalTime, Status status, String title, String email) {
         super(address, description, arrivalTime, status);
         this.title = title;
+        this.email = email;
     }
 
     /**
@@ -68,5 +71,13 @@ public class Mail extends Delivery {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

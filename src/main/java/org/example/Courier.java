@@ -1,32 +1,48 @@
 package org.example;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Courier extends Staff{
 
-    private List<Delivery> deliveries;
+    private List<Parcel> parcels;
 
     public Courier(String name, String email) {
         super(name, email);
         this.staffId = Staff.nextId++;
         this.role = Role.COURIER;
-        this.deliveries = new ArrayList<>();
+        this.parcels = new ArrayList<>();
     }
 
-    @Override
-    public void viewDelivery(String type) {
-        deliveries.sort(new Delivery.DeliveryComparator(type));
+    /**
+     * collects a Parcel and adds it to his inventory to deliver
+     * @param parcel the
+     */
+    public void pickupParcel(Parcel parcel) {
+        deliveries.add(parcel);
+    }
 
-        for (Delivery delivery : deliveries) {
-            if (delivery instanceof Parcel p) {
-                System.out.printf("Parcel : %s", p);
-            }
-            if (delivery instanceof Mail m) {
-                System.out.printf("Message : %s", m);
-            }
+    /**
+     * delivers the Parcel to the Client through the address
+     * @param parcel the delivered Parcel
+     * @return a true or false value indicating the success of the operation
+     */
+    public boolean deliver(Parcel parcel) {
+        Client receiver = PostOffice.searchClient(parcel.getAddress());
+
+        if (receiver == null) {
+            return false;
         }
+
+        parcel.setArrivalTime(LocalDateTime.now());
+
+        receiver.getDeliveries().add(parcel);
+
+        parcels.remove(parcel);
+
+        return true;
     }
 
     @Override
@@ -34,19 +50,19 @@ public class Courier extends Staff{
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Courier courier = (Courier) o;
-        return Objects.equals(deliveries, courier.deliveries);
+        return Objects.equals(parcels, courier.parcels);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), deliveries);
+        return Objects.hash(super.hashCode(), parcels);
     }
 
-    public List<Delivery> getDeliveries() {
-        return deliveries;
+    public List<Parcel> getParcels() {
+        return parcels;
     }
 
-    public void setDeliveries(List<Delivery> deliveries) {
-        this.deliveries = deliveries;
+    public void setParcels(List<Parcel> parcels) {
+        this.parcels = parcels;
     }
 }

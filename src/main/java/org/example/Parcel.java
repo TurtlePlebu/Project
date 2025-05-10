@@ -12,6 +12,14 @@ public class Parcel extends Delivery{
     private int quantity;
     private Courier courier;
 
+    public Parcel(String address, String description, LocalDateTime arrivalTime, Item item, int quantity, Courier courier) {
+        super(address, description, arrivalTime);
+        this.parcelId = nextId++;
+        this.item = item;
+        this.quantity = quantity;
+        this.courier = courier;
+    }
+
     public Parcel(String address, String description, LocalDateTime arrivalTime, Status status, Item item, int quantity, Courier courier) {
         super(address, description, arrivalTime, status);
         this.parcelId = nextId++;

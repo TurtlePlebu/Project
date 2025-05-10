@@ -154,7 +154,8 @@ public class PostOffice implements FilePaths{
             fw.write(mail.getAddress() + ",");
             fw.write(mail.getDescription() + ",");
             fw.write(mail.getArrivalTime().toString() + ",");
-            fw.write(mail.getStatus().toString() + "\n" );
+            fw.write(mail.getStatus().toString() + "," );
+            fw.write(mail.getEmail() + "\n" );
 
         }
     }
@@ -291,6 +292,7 @@ public class PostOffice implements FilePaths{
             advertisements = importAdvertisements();
             clients = importClients();
             staffs = importStaffs();
+            distributeParcelsToCourier();
             importOpenedTickets();
             importOngoingTickets();
             importCompletedTickets();
@@ -390,6 +392,19 @@ public class PostOffice implements FilePaths{
         return parcels;
     }
 
+    private static void distributeParcelsToCourier() {
+        for (Delivery delivery : deliveries) {
+            if (delivery instanceof Parcel p && p.getStatus().equals(Delivery.Status.ONGOING) ) {
+                if (p.getCourier() != null) {
+                    ((Courier) searchStaff(p.getCourier().getStaffId())).pickupParcel(p);
+                }
+                else {
+                    Staff.getProcessedParcels().add(p);
+                }
+            }
+        }
+    }
+
     /**
      * inner function for importDeliveries() that imports all Mails data from Mails.csv
      * @return a List of Delivery containing all the mails in the post-office
@@ -409,8 +424,8 @@ public class PostOffice implements FilePaths{
                 LocalDateTime arrivalTime = LocalDateTime.parse(mailLine[3]);
                 Delivery.Status status = (mailLine[4].equalsIgnoreCase("DELIVERED")) ?
                         Delivery.Status.DELIVERED : Delivery.Status.ONGOING;
-
-                mails.add(new Mail(address, description, arrivalTime, status, title));
+                String email = mailLine[5];
+                mails.add(new Mail(address, description, arrivalTime, status, title, email));
             }
 
         } catch (FileNotFoundException fnfe) {
@@ -567,7 +582,7 @@ public class PostOffice implements FilePaths{
     private static void distributeTicketsToStaff() {
         for (Ticket ticket : ongoingTickets) {
             if (searchStaff(ticket.getStaff().staffId) != null) {
-                searchStaff(ticket.getStaff().staffId).getOngoingTickets().add(ticket);
+                searchStaff(ticket.getStaff().staffId).getOngoingTickets().offer(ticket);
             }
         }
     }
@@ -593,31 +608,26 @@ public class PostOffice implements FilePaths{
         return null;
     }
 
-    /**
-     * finds the Client with the given name in the List of clients
-     * @param name the name of the targeted client
-     * @return the client with the given name
-     */
-    public static Client searchClient(String name) {
-        if (clients == null || clients.isEmpty() || name == null || name.isBlank()) {
+    public static Client searchClient(String address) {
+        if (clients == null || clients.isEmpty() || address == null) {
             return null;
         }
 
         for (Client client : clients) {
-            if (client.getName().equalsIgnoreCase(name)) {
+            if (client.getAddress().equalsIgnoreCase(address)) {
                 return client;
             }
         }
 
-        System.out.println("Did not find client with given name");
+        System.out.println("Did not find staff with given address");
 
         return null;
     }
 
     /**
      * finds the Staff with the given id in the List of staffs
-     * @param staffId the id of the targeted staff
-     * @return the staff with the given id
+     * @param staffId the id of the targeted Staff
+     * @return the Staff with the given id
      */
     public static Staff searchStaff(Integer staffId) {
         if (staffs == null || staffs.isEmpty() || staffId == null) {
@@ -630,24 +640,59 @@ public class PostOffice implements FilePaths{
             }
         }
 
-        System.out.println("Did not find staff with given ID");
+        System.out.println("Did not find client with given ID");
 
         return null;
     }
 
     /**
-     * finds the Staff with the given name in the List of staffs
-     * @param name the name of the targeted staff
-     * @return the staff with the given name
+     * finds all users with the given name in the List of staffs & clients
+     * @param name the name of the targeted staffs or clients
+     * @return the List of staffs & clients with the given name
      */
-    public static Staff searchStaff(String name) {
-        if (staffs == null || staffs.isEmpty() || name == null || name.isBlank()) {
+    public static List<User> searchUserList(String name) {
+        if (staffs == null || staffs.isEmpty() || clients == null || clients.isEmpty() ||
+                email == null || email.isBlank()) {
+            return new ArrayList<>();
+        }
+
+        List<User> users = new ArrayList<>();
+
+        for (Staff staff : staffs) {
+            if (staff.getName().equalsIgnoreCase(name)) {
+                users.add(staff);
+            }
+        }
+
+        for (Client client : clients) {
+            if (client.getName().equalsIgnoreCase(name)) {
+                users.add(client);
+            }
+        }
+
+        return users;
+    }
+
+    /**
+     * finds any User with the given email in both List of staffs & clients
+     * @param email the email of the targeted staff or client
+     * @return the staff & client with the given email
+     */
+    public static User searchUser(String email) {
+        if (staffs == null || staffs.isEmpty() || clients == null || clients.isEmpty() ||
+                email == null || email.isBlank()) {
             return null;
         }
 
         for (Staff staff : staffs) {
-            if (staff.getName().equalsIgnoreCase(name)) {
+            if (staff.getEmail().equalsIgnoreCase(email)) {
                 return staff;
+            }
+        }
+
+        for (Client client : clients) {
+            if (client.getEmail().equalsIgnoreCase(email)) {
+                return client;
             }
         }
 
@@ -655,4 +700,5 @@ public class PostOffice implements FilePaths{
 
         return null;
     }
+
 }

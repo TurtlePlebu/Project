@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.Objects;
 
-public class Manager extends User implements UsersViewing {
+public class Manager extends User implements UsersDeliveryManaging {
     private static int nextID = 0;
 
     private int managerId;
@@ -10,33 +10,6 @@ public class Manager extends User implements UsersViewing {
     public Manager(String name, String email) {
         super(name, email);
         this.managerId = nextID;
-    }
-
-    @Override
-    public void viewDelivery(String sorting) {
-
-        PostOffice.deliveries.sort(new Delivery.DeliveryComparator(sorting));
-
-        for (Delivery delivery : PostOffice.deliveries) {
-            if (delivery instanceof Parcel p) {
-                System.out.printf("Parcel : %s", p);
-            }
-            if (delivery instanceof Mail m) {
-                System.out.printf("Message : %s", m);
-            }
-        }
-    }
-
-    protected Staff searchStaff(String name) {
-        if (name == null || name.isBlank()) {
-            return null;
-        }
-
-        return PostOffice.searchStaff(name);
-    }
-
-    protected Staff searchStaff(int id) {
-        return searchStaff(id);
     }
 
     @Override

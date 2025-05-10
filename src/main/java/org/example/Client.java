@@ -7,13 +7,11 @@ public class Client extends User implements Registerable {
 
     private int clientId;
     private String address;
-    private List<Delivery> deliveries;
 
     public Client(String name, String email, String address) {
         super(name, email);
         this.clientId = nextId++;
         this.address = address;
-        this.deliveries = new ArrayList<>();
     }
 
     public Client(String name, String email, String address, List<Delivery> deliveries) {
@@ -38,14 +36,15 @@ public class Client extends User implements Registerable {
      * @param sorting the format of the display
      */
     @Override
-    public void viewDelivery(String sorting) {
+    protected void viewDelivery(String sorting) {
         if (deliveries.isEmpty()) {
-            this.deliveries = PostOffice.deliveries.stream()
+            this.deliveries = List.copyOf(PostOffice.deliveries)
+                    .stream()
                     .filter(client -> client.getAddress().equalsIgnoreCase(this.address))
                     .toList();
         }
 
-        deliveries.sort(new Delivery.DeliveryComparator(type));
+        deliveries.sort(new Delivery.DeliveryComparator(sorting));
 
         for (Advertisement ad : PostOffice.advertisements) {
             System.out.printf("Ad : %s", ad);
@@ -122,12 +121,12 @@ public class Client extends User implements Registerable {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Client client = (Client) o;
-        return clientId == client.clientId && Objects.equals(address, client.address) && Objects.equals(deliveries, client.deliveries);
+        return clientId == client.clientId && Objects.equals(address, client.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), clientId, address, deliveries);
+        return Objects.hash(super.hashCode(), clientId, address);
     }
 
     public int getClientId() {
@@ -146,11 +145,4 @@ public class Client extends User implements Registerable {
         this.address = address;
     }
 
-    public List<Delivery> getDeliveries() {
-        return deliveries;
-    }
-
-    public void setDeliveries(List<Delivery> deliveries) {
-        this.deliveries = deliveries;
-    }
 }
