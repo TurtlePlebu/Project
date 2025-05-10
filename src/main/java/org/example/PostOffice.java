@@ -20,6 +20,9 @@ public class PostOffice implements FilePaths{
     protected static List<Staff> staffs;
     protected static Manager manager;
 
+    protected static Map<Staff, String> staffSecurityPass;
+    protected static Map<Client, String> clientSecurityPass;
+
     public PostOffice() {
         // load the data
         importData();

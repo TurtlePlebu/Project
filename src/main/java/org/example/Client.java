@@ -26,8 +26,9 @@ public class Client extends User implements Registerable {
      * updates the Post-Office data afterward
      */
     @Override
-    public void register() {
+    public void register(String password) {
         PostOffice.clients.add(this);
+        PostOffice.clientSecurityPass.put(this, password);
         PostOffice.exportData();
     }
 

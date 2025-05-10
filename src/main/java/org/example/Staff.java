@@ -17,6 +17,31 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
     }
 
     /**
+     * registers the Staff to the Post-Office system
+     * updates the Post-Office data afterward
+     */
+    @Override
+    public void register(String password) {
+        PostOffice.staffs.add(this);
+        PostOffice.staffSecurityPass.put(this, password);
+        PostOffice.exportData();
+    }
+
+    /**
+     * adds a Delivery in the Post-Center's list of Delivery
+     * @param del the receiving Delivery
+     * @return a true or false value indicating the success of the operation
+     */
+    @Override
+    public boolean receiveDelivery(Delivery del) {
+        if (!PostOffice.deliveries.contains(del)) {
+            PostOffice.deliveries.add(del);
+        }
+
+        return !PostOffice.deliveries.contains(del);
+    }
+
+    /**
      * gives the ONGOING Parcel to the assigned Courier
      * @param c the assigned Courier to deliver the Parcel
      * @param parcel the ONGOING Parcel
@@ -44,30 +69,6 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
 
         PostOffice.completedTickets.add(ticket);
         PostOffice.exportData();
-    }
-
-    /**
-     * registers the Staff to the Post-Office system
-     * updates the Post-Office data afterward
-     */
-    @Override
-    public void register() {
-        PostOffice.staffs.add(this);
-        PostOffice.exportData();
-    }
-
-    /**
-     * adds a Delivery in the Post-Center's list of Delivery
-     * @param del the receiving Delivery
-     * @return a true or false value indicating the success of the operation
-     */
-    @Override
-    public boolean receiveDelivery(Delivery del) {
-        if (!PostOffice.deliveries.contains(del)) {
-            PostOffice.deliveries.add(del);
-        }
-
-        return !PostOffice.deliveries.contains(del);
     }
 
     /**
