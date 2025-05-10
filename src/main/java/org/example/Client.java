@@ -62,6 +62,24 @@ public class Client extends User implements Registerable {
     }
 
     /**
+     * sends a BUG REPORT Ticket in Post-Office's opened ticket queue
+     * @param title the title of the ticket
+     * @param description the description of the problem
+     */
+    public void sendBugReport(String title, String description) {
+        PostOffice.openedTickets.offer(new Ticket(title, description, this, Ticket.Type.BUGREPORT));
+    }
+
+    /**
+     * sends a SUPPORT Ticket in Post-Office's opened ticket queue
+     * @param title the title of the ticket
+     * @param description the description of the problem
+     */
+    public void sendSupportRequest(String title, String description) {
+        PostOffice.openedTickets.offer(new Ticket(title, description, this, Ticket.Type.SUPPORT));
+    }
+
+    /**
      * adds a Delivery in the Client's list of Delivery
      * and adds the Delivery to the Post-Office's data if not already existed
      * @param del the receiving Delivery
