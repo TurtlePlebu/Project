@@ -42,6 +42,7 @@ public abstract class User {
 
         receiver.getDeliveries().add(mail);
         PostOffice.deliveries.add(mail);
+        PostOffice.exportData();
     }
 
     /**
@@ -71,6 +72,7 @@ public abstract class User {
         Parcel parcel = new Parcel(address, description, null, new Item(itemName, weight, LocalDateTime.now()), quantity, null);
 
         PostOffice.deliveries.add(parcel);
+        PostOffice.exportData();
     }
 
     /**
@@ -80,6 +82,7 @@ public abstract class User {
     protected void removeDelivery(Delivery del) {
         deliveries.remove(del);
         PostOffice.deliveries.remove(del);
+        PostOffice.exportData();
     }
 
     /**

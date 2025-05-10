@@ -21,6 +21,7 @@ public class Courier extends Staff{
      * @param parcel the
      */
     public void pickupParcel(Parcel parcel) {
+        parcel.setCourier(this);
         deliveries.add(parcel);
     }
 

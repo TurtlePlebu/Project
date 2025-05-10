@@ -87,5 +87,6 @@ public interface UsersDeliveryManaging {
      */
     default void removePostOfficeDelivery(Delivery del) {
         PostOffice.deliveries.remove(del);
+        PostOffice.exportData();
     }
 }

@@ -392,6 +392,9 @@ public class PostOffice implements FilePaths{
         return parcels;
     }
 
+    /**
+     * distributes Parcel data from Delivery files to Couriers
+     */
     private static void distributeParcelsToCourier() {
         for (Delivery delivery : deliveries) {
             if (delivery instanceof Parcel p && p.getStatus().equals(Delivery.Status.ONGOING) ) {

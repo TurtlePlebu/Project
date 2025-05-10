@@ -1,5 +1,6 @@
 package org.example;
 
+import java.time.Period;
 import java.util.Objects;
 
 public class Manager extends User implements UsersDeliveryManaging {
@@ -10,6 +11,15 @@ public class Manager extends User implements UsersDeliveryManaging {
     public Manager(String name, String email) {
         super(name, email);
         this.managerId = nextID;
+    }
+
+    protected void reassign(Staff personnel) {
+        if (personnel instanceof Courier) {
+            personnel.setRole(Staff.Role.INDOORS);
+        }
+        else {
+            personnel.setRole(Staff.Role.COURIER);
+        }
     }
 
     @Override

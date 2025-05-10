@@ -27,6 +27,7 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
                 courier.pickupParcel(parcel);
             }
         }
+        PostOffice.exportData();
     }
 
     /**
@@ -42,6 +43,7 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
         ticket.setStaff(this);
 
         PostOffice.completedTickets.add(ticket);
+        PostOffice.exportData();
     }
 
     /**
