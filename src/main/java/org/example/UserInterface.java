@@ -9,6 +9,9 @@ public class UserInterface {
     private static Scanner input = new Scanner(System.in);
     private static User user;
 
+    /**
+     * displays the starting menu of the system
+     */
     public static void menu() {
         int choice = 0;
 
@@ -52,6 +55,12 @@ public class UserInterface {
         } while (choice != 3);
     }
 
+    /**
+     * inner function that registers basics shared information to create or register a User
+     * asks for input from the user to register shared information
+     * @return an String Array with name, email, and password to create a User
+     * @throws RuntimeException general unchecked exception
+     */
     private static String[] registerMenu() throws RuntimeException{
         boolean failed;
 
@@ -100,6 +109,11 @@ public class UserInterface {
         return new String[] {name, email, password};
     }
 
+    /**
+     * registers the client's shared information
+     * asks the user for the address
+     * @throws RuntimeException general unchecked exception
+     */
     private static void clientRegisterMenu() throws RuntimeException{
         String[] userInfo = registerMenu();
         boolean failed = false;
@@ -123,6 +137,10 @@ public class UserInterface {
         newClient.register(userInfo[3]);
     }
 
+    /**
+     * registers the staff's shared information
+     * @throws RuntimeException general uncheck exception
+     */
     private static void staffRegisterMenu() throws RuntimeException {
         String[] userInfo = registerMenu();
 
@@ -130,6 +148,12 @@ public class UserInterface {
         newStaff.register(userInfo[3]);
     }
 
+    /**
+     * verifies if the String only contains letters,
+     * excluding whitespaces and hyphens
+     * @param str the given String to verify
+     * @return a true or false value indicating if the String only contains letters
+     */
     private static boolean lettersOnly(String str) {
         boolean lettersOnly = true;
 
@@ -142,6 +166,11 @@ public class UserInterface {
         return lettersOnly;
     }
 
+    /**
+     * verifies if the email is valid
+     * @param str the email to verify
+     * @return a true of false value indicating if the String only contains letters
+     */
     private static boolean validEmail(String str) {
         return str.contains("@") && str.contains(".") && lettersOnly(str.substring(0,str.indexOf("@")));
     }
