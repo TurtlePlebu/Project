@@ -12,5 +12,5 @@ public interface FilePaths {
     String ONGOINGTICKETS_FILE_PATH = ROOT_PATH + "Ongoing_Tickets.csv";
     String COMPLETEDTICKETs_FILE_PATH = ROOT_PATH + "Completed_Tickets.csv";
     String STAFF_SECURITY_PASS_FILE_PATH = ROOT_PATH + "Staff_SecurityPass.csv";
-    String CLIENT_SECURITY_PASS_FILE_PATH = ROOT_PATH + "CLIENT_SecurityPass.csv";
+    String CLIENT_SECURITY_PASS_FILE_PATH = ROOT_PATH + "Client_SecurityPass.csv";
 }

@@ -61,6 +61,8 @@ public class PostOffice implements FilePaths{
             exportDeliveries();
             exportClients();
             exportStaffs();
+            exportClientSecurity();
+            exportStaffSecurity();
             exportOpenedTickets();
             exportCompletedTickets();
 
@@ -228,6 +230,38 @@ public class PostOffice implements FilePaths{
     }
 
     /**
+     * inner function for exportData() function exports all Client users' security info
+     * @throws IOException Output data exceptions during writing data
+     * @throws RuntimeException General uncheck exception
+     */
+    private static void exportClientSecurity() throws IOException, RuntimeException {
+        File clientSecurityPath = new File(CLIENT_SECURITY_PASS_FILE_PATH);
+
+        try (FileWriter fw = new FileWriter(clientSecurityPath)) {
+            for (Map.Entry<Client, String> client : clientSecurityPass.entrySet()) {
+                fw.write(client.getKey().getEmail() + ",");
+                fw.write(client.getValue() + "\n");
+            }
+        }
+    }
+
+    /**
+     * inner function for exportData() function exports all Staff users' security info
+     * @throws IOException Output data exceptions during data
+     * @throws RuntimeException General uncheck exception
+     */
+    private static void exportStaffSecurity() throws IOException, RuntimeException {
+        File staffSecurityPath = new File(STAFF_SECURITY_PASS_FILE_PATH);
+
+        try (FileWriter fw = new FileWriter(staffSecurityPath)) {
+            for (Map.Entry<Staff, String> staff : staffSecurityPass.entrySet()) {
+                fw.write(staff.getKey().getEmail() + ",");
+                fw.write(staff.getValue() + "\n");
+            }
+        }
+    }
+
+    /**
      * inner function for exportData() function that exports all Tickets in the post-center
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
@@ -295,6 +329,8 @@ public class PostOffice implements FilePaths{
             advertisements = importAdvertisements();
             clients = importClients();
             staffs = importStaffs();
+            importClientSecurityPass();
+            importStaffSecurityPass();
             distributeParcelsToCourier();
             importOpenedTickets();
             importOngoingTickets();
@@ -522,6 +558,56 @@ public class PostOffice implements FilePaths{
     }
 
     /**
+     * inner function for importData() that imports all Staff security data from Client_SecurityPass.csv
+     * @return a Map of clients with their passwords as their values
+     * @throws RuntimeException general unchecked exception
+     */
+    private static Map<Client, String> importClientSecurityPass() throws RuntimeException {
+        File clientSecurityPath = new File(CLIENT_SECURITY_PASS_FILE_PATH);
+        Map<Client, String> clientSecurityPass = new HashMap<>();
+
+        try (Scanner input = new Scanner(clientSecurityPath)) {
+            while (input.hasNextLine()) {
+                String[] securityLine = input.nextLine().split(",");
+
+                String email = securityLine[0];
+                String password = securityLine[1];
+
+                clientSecurityPass.put(searchClientByEmail(email), password);
+            }
+        } catch (FileNotFoundException fnfe) {
+            handler(fnfe, STAFF_SECURITY_PASS_FILE_PATH);
+        }
+
+        return clientSecurityPass;
+    }
+
+    /**
+     * inner function for importData() that imports all Staff security data from Staff_SecurityPass.csv
+     * @return a Map of clients with their passwords as their values
+     * @throws RuntimeException general unchecked exception
+     */
+    private static Map<Staff, String> importStaffSecurityPass() throws RuntimeException {
+        File staffSecurityPath = new File(STAFF_SECURITY_PASS_FILE_PATH);
+        Map<Staff, String> staffsSecurityPass = new HashMap<>();
+
+        try (Scanner input = new Scanner(staffSecurityPath)) {
+            while (input.hasNextLine()) {
+                String[] securityLine = input.nextLine().split(",");
+
+                String email = securityLine[0];
+                String password = securityLine[1];
+
+                staffsSecurityPass.put(searchStaffByEmail(email), password);
+            }
+        } catch (FileNotFoundException fnfe) {
+            handler(fnfe, STAFF_SECURITY_PASS_FILE_PATH);
+        }
+
+        return staffsSecurityPass;
+    }
+
+    /**
      * inner function for importData() that imports all OPEN Ticket data from Tickets.csv
      * @throws RuntimeException general unchecked exception
      */
@@ -679,6 +765,34 @@ public class PostOffice implements FilePaths{
         return users;
     }
 
+    public static Client searchClientByEmail(String email) {
+        if (clients == null || clients.isEmpty() || email == null || email.isBlank()) {
+            return null;
+        }
+
+        for (Client client : clients) {
+            if (client.getEmail().equalsIgnoreCase(email)) {
+                return client;
+            }
+        }
+
+        return null;
+    }
+
+    public static Staff searchStaffByEmail(String email) {
+        if (staffs == null || staffs.isEmpty() || email == null || email.isBlank()) {
+            return null;
+        }
+
+        for (Staff staff : staffs) {
+            if (staff.getEmail().equalsIgnoreCase(email)) {
+                return staff;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * finds any User with the given email in both List of staffs & clients
      * @param email the email of the targeted staff or client
@@ -690,21 +804,15 @@ public class PostOffice implements FilePaths{
             return null;
         }
 
-        for (Staff staff : staffs) {
-            if (staff.getEmail().equalsIgnoreCase(email)) {
-                return staff;
-            }
+        Staff staff = searchStaffByEmail(email);
+        Client client = searchClientByEmail(email);
+
+        if (staff != null) {
+            return staff;
         }
-
-        for (Client client : clients) {
-            if (client.getEmail().equalsIgnoreCase(email)) {
-                return client;
-            }
+        else {
+            return client;
         }
-
-        System.out.println("Did not find staff with given name");
-
-        return null;
     }
 
 }

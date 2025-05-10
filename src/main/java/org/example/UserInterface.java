@@ -2,6 +2,7 @@ package org.example;
 
 import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -22,20 +23,22 @@ public class UserInterface {
             System.out.printf(
                     "[1] Register as a %s \n" +
                     "[2] Register as a %s \n" +
-                    "[3] Exit \n\n"
+                    "[3] Log in" +
+                    "[4] Exit \n\n"
                     ,"client"
                     ,"staff"
                     );
             try {
                 choice = input.nextInt();
-                if (choice > 3) {
+                if (choice > 4) {
                     throw new InvalidNumberOptionException();
                 }
 
                 switch (choice) {
                     case 1 -> clientRegisterMenu();
                     case 2 -> staffRegisterMenu();
-                    case 3 -> PostOffice.exportData();
+                    case 3 -> loginMenu();
+                    case 4 -> PostOffice.exportData();
                 }
 
             } catch (InvalidNumberOptionException inoe) {
@@ -52,7 +55,7 @@ public class UserInterface {
 
             }
 
-        } while (choice != 3);
+        } while (choice != 4);
     }
 
     /**
@@ -77,6 +80,9 @@ public class UserInterface {
                          .map(str -> (str.isBlank()) ? "" : str)
                          .collect(Collectors.joining());
 
+                 if (exitCheck(name)) {
+                    return new String[]{};
+                 }
                 if (!lettersOnly(name)) {
                     throw new InvalidNameException();
                 }
@@ -86,6 +92,9 @@ public class UserInterface {
                         .map(str -> (str.isBlank()) ? "" : str)
                         .collect(Collectors.joining());
 
+                if (exitCheck(email)) {
+                    return new String[]{};
+                }
                 if (!validEmail(email)) {
                     throw new InvalidEmailException();
                 }
@@ -94,6 +103,10 @@ public class UserInterface {
                 password = Arrays.stream(input.next().split(" "))
                         .map(str -> (str.isBlank()) ? "" : str)
                         .collect(Collectors.joining());
+
+                if (exitCheck(password)) {
+                    return new String[]{};
+                }
 
             } catch (InvalidNameException ine) {
                 System.out.println("Remove any symbol or whitespace in your name.\n");
@@ -126,6 +139,10 @@ public class UserInterface {
                 System.out.println("Enter your address : ");
                 address = input.next();
 
+                if (exitCheck(address)) {
+                    return;
+                }
+
             } catch (InvalidNameException ine) {
                 System.out.println("Remove any symbol or whitespace in your address.\n");
                 failed = true;
@@ -135,6 +152,78 @@ public class UserInterface {
 
         Client newClient = new Client(userInfo[1], userInfo[2], address);
         newClient.register(userInfo[3]);
+        System.out.println("Registered!\n");
+    }
+
+    /**
+     * asks the Client user to log in with their email and password
+     */
+    private static boolean loginMenu() throws RuntimeException {
+        boolean failed = false;
+        String email = "";
+        String password = "";
+        String inputPassword = "";
+        Client foundClient = null;
+        Staff foundStaff = null;
+
+        do {
+            try {
+                System.out.println("Enter your email : ");
+                email = input.next();
+
+                if (exitCheck(email)) {
+                    return false;
+                }
+                if (!validEmail(email)) {
+                    throw new InvalidEmailException();
+                }
+
+                foundClient = PostOffice.searchClientByEmail(email);
+                foundStaff = PostOffice.searchStaffByEmail(email);
+
+                if (foundClient != null) {
+                    password = PostOffice.clientSecurityPass.get(foundClient);
+                }
+                if (foundStaff != null) {
+                    password = PostOffice.staffSecurityPass.get(foundStaff);
+                }
+                if (foundStaff == null && foundClient == null) {
+                    throw new UserNotFoundException();
+                }
+
+                System.out.println("Enter your password : ");
+                inputPassword = input.next();
+
+                if (exitCheck(inputPassword)) {
+                    return false;
+                }
+
+            } catch (InvalidEmailException iee) {
+                System.out.println("Email is invalid. Remove any symbol or whitespace.\n");
+                failed = true;
+            } catch (UserNotFoundException unfe) {
+                System.out.println("No such email or user exist.\n");
+                failed = true;
+            }
+
+        } while (failed);
+
+        user = (foundClient != null) ? foundClient : foundStaff;
+        return password.equals(inputPassword);
+    }
+
+
+
+    /**
+     * checks if the String is spelled "exit"
+     * @param str the given String
+     * @return a true or false value indicating the want to go back
+     */
+    private static boolean exitCheck(String str) {
+        if (str == null) {
+            return true;
+        }
+        return str.equalsIgnoreCase("exit");
     }
 
     /**
@@ -146,6 +235,7 @@ public class UserInterface {
 
         Staff newStaff = new Staff(userInfo[1], userInfo[2]);
         newStaff.register(userInfo[3]);
+        System.out.println("Registered!\n");
     }
 
     /**
