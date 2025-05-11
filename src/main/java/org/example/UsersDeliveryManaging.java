@@ -46,6 +46,18 @@ public interface UsersDeliveryManaging {
         return couriers;
     }
 
+    default Courier searchCourier(int id, List<Courier> couriers) {
+        Courier foundCourier = null;
+
+        for (Courier courier : couriers) {
+            if (courier.getStaffId() == id) {
+                foundCourier = courier;
+            }
+        }
+
+        return foundCourier;
+    }
+
     /**
      * searches for a Staff with the given id
      * @param id the id of the targeted Staff
@@ -83,10 +95,27 @@ public interface UsersDeliveryManaging {
 
     /**
      * arbitrary removes a Delivery from the Post-Office's system
-     * @param del the targeted Delivery
+     * @param id the targeted Delivery's id
      */
-    default void removePostOfficeDelivery(Delivery del) {
-        PostOffice.deliveries.remove(del);
+    default void removePostOfficeDelivery(int id) {
+        PostOffice.deliveries.remove(searchDeliverySystem(id));
         PostOffice.exportData();
+    }
+
+    /**
+     * searches a Delivery in the Post-Office's system
+     * @param id the id of the targeted Delivery
+     * @return the targeted Delivery
+     */
+    default Delivery searchDeliverySystem(int id) {
+        Delivery foundDelivery = null;
+
+        for (Delivery delivery : PostOffice.deliveries) {
+            if (delivery.getDeliveryId() == id) {
+               foundDelivery = delivery;
+            }
+        }
+
+        return foundDelivery;
     }
 }

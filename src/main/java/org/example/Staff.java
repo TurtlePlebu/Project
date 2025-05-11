@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Staff extends User implements Registerable, UsersDeliveryManaging {
     protected static int nextId = 0;
-    private static List<Parcel> processedParcels = new ArrayList<>();
+    private static Queue<Parcel> processedParcels = new PriorityQueue<>();
 
     protected int staffId;
     private Queue<Ticket> ongoingTickets = new PriorityQueue<>();
@@ -56,11 +56,11 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
     }
 
     /**
-     * answers the first Ticket in queue
-     * @param reply the reply of the Staff
+     * answers the next Ticket in queue
+     * @param ticket the next Ticket
+     * @param reply the reply from the Staff
      */
-    public void replyTicket(String reply) {
-        Ticket ticket = ongoingTickets.poll();
+    public void replyTicket(Ticket ticket, String reply) {
 
         sendMail(reply,ticket.getTitle(), ticket.getClient().getEmail());
 
@@ -145,7 +145,7 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
         return ongoingTickets;
     }
 
-    public static List<Parcel> getProcessedParcels() {
+    public static Queue<Parcel> getProcessedParcels() {
         return processedParcels;
     }
 }

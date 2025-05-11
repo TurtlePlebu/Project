@@ -2,7 +2,6 @@ package org.example;
 
 import java.util.Arrays;
 import java.util.InputMismatchException;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -129,11 +128,12 @@ public class UserInterface {
      */
     private static void clientRegisterMenu() throws RuntimeException {
         String[] userInfo = registerMenu();
-        boolean failed = false;
+        boolean failed;
 
         String address = "";
 
         do {
+            failed = false;
             try {
 
                 System.out.println("Enter your address : ");
@@ -160,13 +160,14 @@ public class UserInterface {
      */
     private static void login() {
         loginMenu();
+        selectUserMenu();
     }
 
     /**
      * asks the Client user to log in with their email and password
      */
     private static boolean loginMenu() throws RuntimeException {
-        boolean failed = false;
+        boolean failed;
         String email = "";
         String password = "";
         String inputPassword = "";
@@ -174,6 +175,7 @@ public class UserInterface {
         Staff foundStaff = null;
 
         do {
+            failed = false;
             try {
                 System.out.println("Enter your email : ");
                 email = input.next();
@@ -224,11 +226,293 @@ public class UserInterface {
      */
     private static void selectUserMenu() {
         if (user instanceof Staff staff) {
+            if (staff instanceof Courier courier) {
 
+            }
+            else {
+                staffMenu(staff);
+            }
         }
         if (user instanceof Client client) {
             clientMenu(client);
         }
+    }
+
+    /**
+     * displays all possible actions the Staff can perform
+     * @param staff the current Staff
+     */
+    private static void staffMenu(Staff staff) {
+        int choice = 0;
+
+        do {
+            System.out.println(
+                            "[1] View delivery inbox\n" +
+                            "[2] Send mail\n" +
+                            "[3] Send parcel\n" +
+                            "[4] Process ongoing parcel\n" +
+                            "[5] View client list\n" +
+                            "[6] View Staff list\n" +
+                            "[7] Review next ticket\n" +
+                            "[8] Remove delivery from inbox\n" +
+                            "[9] Remove delivery from system\n" +
+                            "[10] View all the deliveries\n" +
+                            "[11] Exit\n"
+            );
+            try {
+
+                choice = input.nextInt();
+
+                if (choice > 11 || choice < 1) {
+                    throw new InvalidNumberOptionException();
+                }
+
+                switch (choice) {
+                    case 1 -> viewDeliveryInbox(staff);
+                    case 2 -> createMail(staff);
+                    case 3 -> createParcel(staff);
+                    case 4 -> processParcel(staff);
+                    case 5 -> viewClientList(staff);
+                    case 6 -> viewStaffList(staff);
+                    case 7 -> reviewTicket(staff);
+                    case 8 -> deleteDelivery(staff);
+                    case 9 -> deleteDeliverySystem(staff);
+                    case 10 -> viewAllDelivery(staff);
+                    case 11 -> PostOffice.exportData();
+                }
+
+            } catch (InvalidNumberOptionException inoe) {
+                System.out.println("Please select the following options.\n");
+
+            } catch (InputMismatchException ime) {
+                System.out.println("Please remove any symbols and enter an Integer.\n");
+
+            }
+
+        } while (choice != 11);
+    }
+
+    /**
+     * inner function that allows the Staff to assign a parcel to a given Courier
+     * @param staff the current Staff
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void processParcel(Staff staff) throws RuntimeException {
+        boolean failed;
+        int id = 0;
+
+        do {
+            failed = false;
+            try {
+                System.out.println("Enter a courier's id : ");
+                String idInput = input.next();
+
+                if (exitCheck(idInput)) {
+                    return;
+                }
+
+                id = Integer.parseInt(idInput);
+
+
+                if (PostOffice.searchStaff(id) == null) {
+                    throw new UserNotFoundException();
+                }
+
+            } catch (UserNotFoundException unfe) {
+                System.out.println("Id does not exist.\n");
+                failed = true;
+            }
+            catch (NumberFormatException nfe) {
+                System.out.println("Remove any symbols and enter an Integer\n");
+                failed = true;
+            }
+        } while (failed);
+
+        staff.assignProcessedParcel(staff.searchCourier(id, staff.searchCouriers()), Staff.getProcessedParcels().poll());
+    }
+
+    /**
+     * inner function that allows the Staff to view the list of Client
+     * @param staff the current Staff
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void viewClientList(Staff staff) throws RuntimeException {
+        int choice = 0;
+
+        do {
+            try {
+                System.out.println(
+                        "[1] By Name alphabetically\n" +
+                        "[2] By Name reverse alphabetically\n" +
+                        "[3] By Id reverse\n" +
+                        "[4] By Id\n" +
+                        "[5] Exit\n"
+                );
+                choice = input.nextInt();
+
+                if (choice > 5 || choice < 1) {
+                    throw new InvalidNumberOptionException();
+                }
+
+                switch (choice) {
+                    case 1 -> staff.viewClient("name ascendingly");
+                    case 2 -> staff.viewClient("name descendingly");
+                    case 3 -> staff.viewClient("id descendingly ");
+                    case 4 -> staff.viewClient("");
+                }
+            } catch (InvalidNumberOptionException inoe) {
+                System.out.println("Please select the following options.\n");
+            } catch (InputMismatchException ime) {
+                System.out.println("Please remove any symbols and enter an Integer.\n");
+            }
+
+        } while (choice != 5) ;
+    }
+
+    /**
+     * inner function that allows the Staff to view the list of Staff
+     * @param staff the current Staff
+     * @throws RuntimeException general unchecked exception
+     * */
+    private static void viewStaffList(Staff staff) throws RuntimeException {
+        int choice = 0;
+
+        do {
+            try {
+                System.out.println(
+                        "[1] By Name alphabetically\n" +
+                        "[2] By Name reverse alphabetically\n" +
+                        "[3] By Id reverse\n" +
+                        "[4] By Id\n" +
+                        "[5] Exit\n"
+                );
+                choice = input.nextInt();
+
+                if (choice > 5 || choice < 1) {
+                    throw new InvalidNumberOptionException();
+                }
+
+                switch (choice) {
+                    case 1 -> staff.viewStaff("name ascendingly");
+                    case 2 -> staff.viewStaff("name descendingly");
+                    case 3 -> staff.viewStaff("id descendingly ");
+                    case 4 -> staff.viewStaff("");
+                }
+            } catch (InvalidNumberOptionException inoe) {
+                System.out.println("Please select the following options.\n");
+            } catch (InputMismatchException ime) {
+                System.out.println("Please remove any symbols and enter an Integer.\n");
+            }
+
+        } while (choice != 5) ;
+    }
+
+    /**
+     * inner function that allows the Staff to reply to the next OPEN Ticket in queue
+     * @param staff the current Staff
+     */
+    private static void reviewTicket(Staff staff) {
+        staff.getOngoingTickets().offer(PostOffice.openedTickets.poll());
+
+        Ticket ticket = staff.getOngoingTickets().poll();
+
+        System.out.printf(
+                            "%d\n" +
+                            "%s\n" +
+                            "Title : %s\n" +
+                            "Detail : %s\n" +
+                            "Type : %s\n" +
+                            "Time : %s\n"
+                            ,ticket.getTicketId()
+                            ,ticket.getClient().getName()
+                            ,ticket.getDetail()
+                            ,ticket.getType().toString()
+                            ,ticket.getCreationTime().toString()
+        );
+
+        System.out.println("Enter -10 to leave.");
+        System.out.println("Reply : ");
+        String reply = input.nextLine();
+
+        if (reply.contains("-10")) {
+            ticket.setTicketStatus(Ticket.TicketStatus.PROCESSING);
+            staff.getOngoingTickets().offer(ticket);
+            return;
+        }
+
+        staff.replyTicket(ticket, reply);
+    }
+
+    /**
+     * arbitrary delete a Delivery from the Post-Office's system
+     * @param staff the current Staff
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void deleteDeliverySystem(Staff staff) throws RuntimeException {
+        int choice = 0;
+        boolean failed;
+
+        do {
+            failed = false;
+            try {
+                System.out.println("Enter delivery ID : ");
+                String choiceInput = input.next();
+
+                if (exitCheck(choiceInput)) {
+                    return;
+                }
+
+                choice = Integer.parseInt(choiceInput);
+
+                if (staff.searchDelivery(choice) == null) {
+                    throw new DeliveryNotFoundException();
+                }
+
+            } catch (InputMismatchException | NumberFormatException ime) {
+                System.out.println("Remove any symbol and enter an Integer.\n");
+                failed = true;
+            } catch (DeliveryNotFoundException dnfe) {
+                System.out.println("Unable to find given delivery.\n");
+                failed = true;
+            }
+
+        } while (failed);
+
+        staff.removePostOfficeDelivery(choice);
+    }
+
+    /**
+     * inner function that allows the Staff to display all the deliveries in the Post-Office system
+     * @param staff the current Staff
+     */
+    private static void viewAllDelivery(Staff staff) {
+        int choice = 0;
+
+        do {
+            try {
+                System.out.println(
+                        "[1] Latest\n" +
+                                "[2] Reverse\n" +
+                                "[3] Exit\n"
+                );
+                choice = input.nextInt();
+
+                if (choice > 3 || choice < 1) {
+                    throw new InvalidNumberOptionException();
+                }
+
+                switch (choice) {
+                    case 1 -> staff.viewAllDelivery("");
+                    case 2 -> staff.viewAllDelivery("reverse");
+                }
+
+            } catch (InvalidNumberOptionException inoe) {
+                System.out.println("Please select the following options.\n");
+            } catch (InputMismatchException ime) {
+                System.out.println("Please remove any symbols and enter an Integer.\n");
+            }
+
+        } while (choice != 3) ;
     }
 
     /**
@@ -318,7 +602,7 @@ public class UserInterface {
      * @throws RuntimeException general unchecked exception
      */
     private static void createMail(User u) throws RuntimeException {
-        boolean failed = false;
+        boolean failed;
 
         System.out.println("Enter a title :");
         String title = input.nextLine();
@@ -329,6 +613,7 @@ public class UserInterface {
         String email = "";
 
         do {
+            failed = false;
             try {
                 System.out.println("Receiver's email :");
                  email = input.nextLine();
@@ -363,7 +648,7 @@ public class UserInterface {
      * @throws RuntimeException general unchecked exception
      */
     private static void createParcel(User u) throws RuntimeException {
-        boolean failed = false;
+        boolean failed;
 
         System.out.println("Enter the item name :");
         String itemName = input.nextLine();
@@ -380,6 +665,7 @@ public class UserInterface {
         String email = "";
 
         do {
+            failed = false;
             try {
                 System.out.println("Weight :");
                 String weightInput = input.next();
@@ -427,6 +713,9 @@ public class UserInterface {
             } catch (EmailNotFoundException enfe ) {
                 System.out.println("Cannot find email.\n");
                 failed = true;
+            } catch (NumberFormatException nfe) {
+                System.out.println("Remove any symbols and enter an Integer\n");
+                failed = true;
             }
         } while (failed);
 
@@ -439,22 +728,38 @@ public class UserInterface {
      * @throws RuntimeException general unchecked exception
      */
     private static void deleteDelivery(User u) throws RuntimeException {
-        int choice = -1;
+        int id = -1;
+        boolean failed = false;
 
         do {
-            u.viewDelivery("");
+            failed = false;
+            try {
+                u.viewDelivery("");
 
-            System.out.println("Choose a delivery to remove (Use a number of the display order starting from 0) : ");
-            String choiceInput = input.next();
+                System.out.println("Enter delivery ID : ");
+                String idInput = input.next();
 
-            if (exitCheck(choiceInput)) {
-                return;
+                if (exitCheck(idInput)) {
+                    return;
+                }
+
+                id = Integer.parseInt(idInput);
+
+                if (!u.checkDelivery(id)) {
+                    throw new DeliveryNotFoundException();
+                }
+
+            } catch (InputMismatchException | NumberFormatException ime) {
+                System.out.println("Remove any symbol and enter an Integer.\n");
+                failed = true;
+            } catch (DeliveryNotFoundException dnfe) {
+                System.out.println("Unable to find given delivery.\n");
+                failed = true;
             }
 
-            choice = Integer.parseInt(choiceInput);
-        } while (choice < 0);
+        } while (failed);
 
-        u.removeDelivery(u.getDeliveries().get(choice));
+        u.removeDelivery(u.searchDelivery(id));
     }
 
     /**
@@ -496,6 +801,7 @@ public class UserInterface {
 
         client.sendSupportRequest(title, detail);
     }
+
     /**
      * checks if the String is spelled "exit"
      * @param str the given String
@@ -505,7 +811,7 @@ public class UserInterface {
         if (str == null) {
             return true;
         }
-        return str.equalsIgnoreCase("exit");
+        return str.equalsIgnoreCase("exit") || str.toLowerCase().contains("exit");
     }
 
     /**

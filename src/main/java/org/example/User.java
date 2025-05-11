@@ -86,6 +86,24 @@ public abstract class User {
     }
 
     /**
+     * searches a Delivery within the user's deliveries
+     * @param id the id of targeted Delivery
+     * @return the targeted Delivery
+     */
+    protected Delivery searchDelivery(int id) {
+        Delivery del = null;
+        if (checkDelivery(id)) {
+            for (Delivery delivery : deliveries) {
+                if (delivery.getDeliveryId() == id) {
+                    del = delivery;
+                }
+            }
+        }
+
+        return del;
+    }
+
+    /**
      * displays all the deliveries of the User
      * @param sorting the format of the display
      */
@@ -104,6 +122,20 @@ public abstract class User {
                 System.out.printf("Message : %s", m);
             }
         }
+    }
+
+    /**
+     * checks if the Delivery exists within this user's deliveries
+     * @param id the id of the Delivery
+     * @return a true or false value indicating the presence of the Delivery
+     */
+    protected boolean checkDelivery(int id) {
+        for (Delivery delivery : deliveries) {
+            if (delivery.getDeliveryId() == id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

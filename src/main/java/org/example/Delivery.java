@@ -5,12 +5,16 @@ import java.util.Comparator;
 import java.util.Objects;
 
 public abstract class Delivery {
+    private static int nextId = 0;
+
+    protected int deliveryId;
     protected String address;
     protected String description;
     protected LocalDateTime arrivalTime;
     protected Status status;
 
     public Delivery(String address, String description, LocalDateTime arrivalTime) {
+        this.deliveryId = nextId++;
         this.address = address;
         this.description = description;
         this.arrivalTime = arrivalTime;
@@ -18,6 +22,7 @@ public abstract class Delivery {
     }
 
     public Delivery(String address, String description, LocalDateTime arrivalTime, Status status) {
+        this.deliveryId = nextId++;
         this.address = address;
         this.description = description;
         this.arrivalTime = arrivalTime;
@@ -55,20 +60,24 @@ public abstract class Delivery {
 
     @Override
     public String toString() {
-        return String.format("%-20s%-10s%-15s\n",
-                description,String.valueOf(status),arrivalTime.toString());
+        return String.format("%-5d%-10s%-20s%-10s%-15s\n",
+                deliveryId,address, description,String.valueOf(status),arrivalTime.toString());
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Delivery delivery = (Delivery) o;
-        return Objects.equals(description, delivery.description) && Objects.equals(arrivalTime, delivery.arrivalTime) && status == delivery.status;
+        return deliveryId == delivery.deliveryId && Objects.equals(address, delivery.address) && Objects.equals(description, delivery.description) && Objects.equals(arrivalTime, delivery.arrivalTime) && status == delivery.status;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(description, arrivalTime, status);
+    }
+
+    public int getDeliveryId() {
+        return deliveryId;
     }
 
     public String getAddress() {

@@ -8,5 +8,9 @@ public class Main {
         Scanner input = new Scanner(System.in);
 
         String num = input.next();
+
+        int num2 = Integer.parseInt(num);
+
+        System.out.println(num2);
     }
 }
