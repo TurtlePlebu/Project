@@ -58,6 +58,11 @@ public class Courier extends Staff{
         return true;
     }
 
+    /**
+     * searches the Parcel with the given id
+     * @param id the id of the targeted Parcel
+     * @return the targeted Parcel
+     */
     public Parcel searchParcel(int id) {
         Parcel foundParcel = null;
 

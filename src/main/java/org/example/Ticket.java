@@ -110,6 +110,10 @@ public class Ticket {
         return Objects.hash(title, detail, client, type, ticketStatus, staff, ticketId);
     }
 
+    public static void setNextId(int nextId) {
+        Ticket.nextId = nextId;
+    }
+
     public String getTitle() {
         return title;
     }
