@@ -72,6 +72,10 @@ public class Parcel extends Delivery{
         return Objects.hash(super.hashCode(), parcelId, address, item, quantity);
     }
 
+    public static void setNextId(int nextId) {
+        Parcel.nextId = nextId;
+    }
+
     public int getParcelId() {
         return parcelId;
     }

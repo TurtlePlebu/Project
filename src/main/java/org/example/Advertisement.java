@@ -17,7 +17,7 @@ public class Advertisement extends Mail implements Comparable<Advertisement> {
     /**
      * naturally sorts the advertisements by company names
      * @param o the object to be compared.
-     * @return
+     * @return Integer value of comparison
      */
     @Override
     public int compareTo(Advertisement o) {

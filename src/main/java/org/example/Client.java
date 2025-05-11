@@ -154,6 +154,10 @@ public class Client extends User implements Registerable {
         return clientId;
     }
 
+    public static void setNextId(int nextId) {
+        Client.nextId = nextId;
+    }
+
     public void setClientId(int clientId) {
         this.clientId = clientId;
     }

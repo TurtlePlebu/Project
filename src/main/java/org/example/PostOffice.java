@@ -40,6 +40,7 @@ public class PostOffice implements FilePaths{
             exportClientSecurity();
             exportStaffSecurity();
             exportOpenedTickets();
+            exportOngoingTickets();
             exportCompletedTickets();
 
         } catch (IOException e) {
@@ -95,6 +96,10 @@ public class PostOffice implements FilePaths{
                 }
                 exportMails(mail1);
             }
+        }
+
+        for (Advertisement ad : advertisements) {
+            ads.add(ad);
         }
 
         exportCompanyAdvertisements(ads);
@@ -282,7 +287,7 @@ public class PostOffice implements FilePaths{
      * @throws RuntimeException General unchecked exception
      */
     private static void exportOngoingTickets() throws IOException, RuntimeException {
-        exportTickets(ONGOINGTICKETS_FILE_PATH, openedTickets);
+        exportTickets(ONGOINGTICKETS_FILE_PATH, ongoingTickets);
     }
 
     /**
@@ -304,12 +309,12 @@ public class PostOffice implements FilePaths{
             address = info[1];
             email = info[2];
             manager = new Manager(info[3], info[4]);
-            deliveries = importDeliveries();
-            advertisements = importAdvertisements();
             clients = importClients();
             staffs = importStaffs();
-            importClientSecurityPass();
-            importStaffSecurityPass();
+            clientSecurityPass = importClientSecurityPass();
+            staffSecurityPass =  importStaffSecurityPass();
+            deliveries = importDeliveries();
+            advertisements = importAdvertisements();
             distributeParcelsToCourier();
             importOpenedTickets();
             importOngoingTickets();
@@ -367,6 +372,8 @@ public class PostOffice implements FilePaths{
     private static List<Delivery> importDeliveries() throws RuntimeException {
         List<Delivery> deliveries = new ArrayList<>();
 
+        Delivery.setNextId(0);
+
         for (Delivery delivery : importParcels()) {
             deliveries.add(delivery);
         }
@@ -385,6 +392,7 @@ public class PostOffice implements FilePaths{
     private static List<Delivery> importParcels() throws RuntimeException {
         File parcelFile = new File(PARCELS_FILE_PATH);
         List<Delivery> parcels = new ArrayList<>();
+        Parcel.setNextId(0);
 
         try (Scanner input = new Scanner(parcelFile)) {
             while (input.hasNextLine()) {
@@ -457,7 +465,7 @@ public class PostOffice implements FilePaths{
         return mails;
     }
 
-    private static List<Advertisement> importAdvertisements() {
+    private static List<Advertisement> importAdvertisements() throws RuntimeException{
         File adPath = new File(COMPANYADVERTISEMENTS_FILE_PATH);
         List<Advertisement> ads = new ArrayList<>();
 
@@ -465,10 +473,12 @@ public class PostOffice implements FilePaths{
             while (input.hasNextLine()) {
                 String[] adLine = input.nextLine().split(",");
                 String companyName = adLine[0];
-                String description = adLine[1];
-                LocalDateTime arrivalTime = LocalDateTime.parse(adLine[2]);
-                Delivery.Status status = (adLine[3].equalsIgnoreCase("DELIVERED")) ?
+                String title = adLine[1];
+                String description = adLine[2];
+                LocalDateTime arrivalTime = LocalDateTime.parse(adLine[3]);
+                Delivery.Status status = (adLine[4].equalsIgnoreCase("DELIVERED")) ?
                         Delivery.Status.DELIVERED : Delivery.Status.ONGOING;
+                advertisements.add(new Advertisement(description, arrivalTime, title, companyName, null));
             }
         } catch (FileNotFoundException fnfe) {
             handler(fnfe, COMPANYADVERTISEMENTS_FILE_PATH);
@@ -485,6 +495,7 @@ public class PostOffice implements FilePaths{
     private static List<Client> importClients() throws RuntimeException {
         File clientPath = new File(CLIENT_FILE_PATH);
         List<Client> clients = new ArrayList<>();
+        Client.setNextId(0);
 
         try (Scanner input = new Scanner(clientPath)) {
             while (input.hasNextLine()) {
@@ -512,6 +523,7 @@ public class PostOffice implements FilePaths{
     private static List<Staff> importStaffs() throws RuntimeException {
         File staffPath = new File(STAFF_FILE_PATH);
         List<Staff> staffs = new ArrayList<>();
+        Staff.setNextId(0);
 
         try (Scanner input = new Scanner(staffPath)) {
             while (input.hasNextLine()) {
@@ -612,8 +624,9 @@ public class PostOffice implements FilePaths{
         importTickets(COMPLETEDTICKETs_FILE_PATH);
     }
 
-    private static void importTickets(String path) throws RuntimeException{
+    private static void importTickets(String path) throws RuntimeException {
         File ticketPath = new File(path);
+        Ticket.setNextId(0);
 
         try (Scanner input = new Scanner(ticketPath)) {
             while (input.hasNextLine()) {
@@ -712,7 +725,7 @@ public class PostOffice implements FilePaths{
             }
         }
 
-        System.out.println("Did not find client with given ID");
+        System.out.println("Did not find staff with given ID");
 
         return null;
     }

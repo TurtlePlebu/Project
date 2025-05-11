@@ -28,7 +28,7 @@ public class UserInterface {
                     ,"staff"
                     );
             try {
-                choice = input.nextInt();
+                choice = Integer.parseInt(input.nextLine());
                 if (choice > 4 || choice < 1) {
                     throw new InvalidNumberOptionException();
                 }
@@ -75,7 +75,9 @@ public class UserInterface {
 
             try {
                 System.out.println("Enter your name : ");
-                 name = Arrays.stream(input.next().split(" "))
+                name = input.nextLine();
+
+                name = Arrays.stream(name.split(" "))
                          .map(str -> (str.isBlank()) ? "" : str)
                          .collect(Collectors.joining());
 
@@ -87,7 +89,8 @@ public class UserInterface {
                 }
 
                 System.out.println("Enter your email : ");
-                email = Arrays.stream(input.next().split(" "))
+                email = input.nextLine();
+                email = Arrays.stream(email.split(" "))
                         .map(str -> (str.isBlank()) ? "" : str)
                         .collect(Collectors.joining());
 
@@ -99,7 +102,8 @@ public class UserInterface {
                 }
 
                 System.out.println("Enter a password : ");
-                password = Arrays.stream(input.next().split(" "))
+                password = input.nextLine();
+                password = Arrays.stream(password.split(" "))
                         .map(str -> (str.isBlank()) ? "" : str)
                         .collect(Collectors.joining());
 
@@ -137,7 +141,7 @@ public class UserInterface {
             try {
 
                 System.out.println("Enter your address : ");
-                address = input.next();
+                address = input.nextLine();
 
                 if (exitCheck(address)) {
                     return;
@@ -178,7 +182,7 @@ public class UserInterface {
             failed = false;
             try {
                 System.out.println("Enter your email : ");
-                email = input.next();
+                email = input.nextLine();
 
                 if (exitCheck(email)) {
                     return false;
@@ -201,7 +205,7 @@ public class UserInterface {
                 }
 
                 System.out.println("Enter your password : ");
-                inputPassword = input.next();
+                inputPassword = input.nextLine();
 
                 if (exitCheck(inputPassword)) {
                     return false;
@@ -254,7 +258,7 @@ public class UserInterface {
             );
             try {
 
-                choice = input.nextInt();
+                choice = Integer.parseInt(input.nextLine());
 
                 if (choice > 7 || choice < 1) {
                     throw new InvalidNumberOptionException();
@@ -299,7 +303,7 @@ public class UserInterface {
                         "[4] By Id\n" +
                         "[5] Exit\n"
                 );
-                choice = input.nextInt();
+                choice = Integer.parseInt(input.nextLine());
 
                 if (choice > 5 || choice < 1) {
                     throw new InvalidNumberOptionException();
@@ -336,7 +340,7 @@ public class UserInterface {
             failed = false;
             try {
                 System.out.println("Enter parcel Id : ");
-                String idInput = input.next();
+                String idInput = input.nextLine();
 
                 if (exitCheck(idInput)) {
                     return;
@@ -384,7 +388,7 @@ public class UserInterface {
             );
             try {
 
-                choice = input.nextInt();
+                choice = Integer.parseInt(input.nextLine());
 
                 if (choice > 11 || choice < 1) {
                     throw new InvalidNumberOptionException();
@@ -428,7 +432,7 @@ public class UserInterface {
             failed = false;
             try {
                 System.out.println("Enter a courier's id : ");
-                String idInput = input.next();
+                String idInput = input.nextLine();
 
                 if (exitCheck(idInput)) {
                     return;
@@ -471,7 +475,7 @@ public class UserInterface {
                         "[4] By Id\n" +
                         "[5] Exit\n"
                 );
-                choice = input.nextInt();
+                choice = Integer.parseInt(input.nextLine());
 
                 if (choice > 5 || choice < 1) {
                     throw new InvalidNumberOptionException();
@@ -511,7 +515,7 @@ public class UserInterface {
                         "[4] By Id\n" +
                         "[5] Exit\n"
                 );
-                choice = input.nextInt();
+                choice = Integer.parseInt(input.nextLine());
 
                 if (choice > 5 || choice < 1) {
                     throw new InvalidNumberOptionException();
@@ -583,7 +587,7 @@ public class UserInterface {
             failed = false;
             try {
                 System.out.println("Enter delivery ID : ");
-                String choiceInput = input.next();
+                String choiceInput = input.nextLine();
 
                 if (exitCheck(choiceInput)) {
                     return;
@@ -622,7 +626,7 @@ public class UserInterface {
                                 "[2] Reverse\n" +
                                 "[3] Exit\n"
                 );
-                choice = input.nextInt();
+                choice = Integer.parseInt(input.nextLine());
 
                 if (choice > 3 || choice < 1) {
                     throw new InvalidNumberOptionException();
@@ -663,7 +667,7 @@ public class UserInterface {
             );
             try {
 
-                choice = input.nextInt();
+                choice = Integer.parseInt(input.nextLine());
 
                 if (choice > 7 || choice < 1) {
                     throw new InvalidNumberOptionException();
@@ -704,7 +708,7 @@ public class UserInterface {
                                 "[2] Reverse\n" +
                                 "[3] Exit\n"
                 );
-                choice = input.nextInt();
+                choice = Integer.parseInt(input.nextLine());
 
                 if (choice > 3 || choice < 1) {
                     throw new InvalidNumberOptionException();
@@ -797,7 +801,7 @@ public class UserInterface {
             failed = false;
             try {
                 System.out.println("Weight :");
-                String weightInput = input.next();
+                String weightInput = input.nextLine();
 
                 if (exitCheck(weightInput)) {
                     return;
@@ -809,7 +813,7 @@ public class UserInterface {
                 }
 
                 System.out.println("Quantity :");
-                String quantityInput = input.next();
+                String quantityInput = input.nextLine();
 
                 if (exitCheck(quantityInput)) {
                     return;
@@ -866,7 +870,7 @@ public class UserInterface {
                 u.viewDelivery("");
 
                 System.out.println("Enter delivery ID : ");
-                String idInput = input.next();
+                String idInput = input.nextLine();
 
                 if (exitCheck(idInput)) {
                     return;

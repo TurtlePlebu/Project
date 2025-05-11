@@ -80,6 +80,10 @@ public abstract class Delivery {
         return deliveryId;
     }
 
+    public static void setNextId(int nextId) {
+        Delivery.nextId = nextId;
+    }
+
     public String getAddress() {
         return address;
     }

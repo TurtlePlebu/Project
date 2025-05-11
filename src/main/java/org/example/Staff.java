@@ -4,10 +4,10 @@ import java.util.*;
 
 public class Staff extends User implements Registerable, UsersDeliveryManaging {
     protected static int nextId = 0;
-    private static Queue<Parcel> processedParcels = new PriorityQueue<>();
+    private static Queue<Parcel> processedParcels = new PriorityQueue<>(new Parcel.ParcelComparator(""));
 
     protected int staffId;
-    private Queue<Ticket> ongoingTickets = new PriorityQueue<>();
+    private Queue<Ticket> ongoingTickets = new PriorityQueue<>(new Ticket.TicketComparator(""));
     protected Role role;
 
     public Staff(String name, String email) {
@@ -107,7 +107,7 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
     @Override
     public String toString() {
         return String.format("Staff :\n" +
-                "%-10s: %d" +
+                "%-10s: %d\n" +
                 super.toString(),
                 "Staff ID", staffId);
     }
@@ -123,6 +123,10 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), staffId, ongoingTickets, role);
+    }
+
+    public static void setNextId(int nextId) {
+        Staff.nextId = nextId;
     }
 
     public int getStaffId() {
