@@ -1,15 +1,13 @@
-import org.junit.jupiter.api.Assertions;
+import org.example.Client;
+import org.example.PostOffice;
+import org.example.Staff;
+import org.example.UserInterface;
 import org.junit.jupiter.api.Test;
 
-import static org.example.UserInterface.menu;
-
 public class UserInterfaceTest {
-
     @Test
     public void menuTest() {
-
-        menu();
-
-        Assertions.assertTrue(true);
+        PostOffice postOffice = new PostOffice();
+        UserInterface.menu();
     }
 }

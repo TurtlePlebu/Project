@@ -8,54 +8,30 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class PostOffice implements FilePaths{
-    protected static String name;
-    protected static String address;
-    protected static String email;
-    protected static List<Delivery> deliveries;
-    protected static List<Advertisement> advertisements;
-    protected static Queue<Ticket> openedTickets;
-    protected static List<Ticket> ongoingTickets;
-    protected static List<Ticket> completedTickets;
-    protected static List<Client> clients;
-    protected static List<Staff> staffs;
-    protected static Manager manager;
+    public static String name = "Canada Post";
+    public static String address = "2000 Blvd. Marcel-Laurin Saint-Laurent";
+    public static String email = "CanadaPost@hotmail.com";
+    public static List<Delivery> deliveries = new ArrayList<>();
+    public static List<Advertisement> advertisements = new ArrayList<>();
+    public static Queue<Ticket> openedTickets = new PriorityQueue<>(new Ticket.TicketComparator(""));
+    public static List<Ticket> ongoingTickets = new ArrayList<>();
+    public static List<Ticket> completedTickets = new ArrayList<>();
+    public static List<Client> clients = new ArrayList<>();
+    public static List<Staff> staffs = new ArrayList<>();
+    public static Manager manager = new Manager("Nathan", "CanadaPostManagement@CanadaPost.com");
 
-    protected static Map<Staff, String> staffSecurityPass;
-    protected static Map<Client, String> clientSecurityPass;
+    public static Map<Staff, String> staffSecurityPass = new HashMap<>();
+    public static Map<Client, String> clientSecurityPass = new HashMap<>();
 
     public PostOffice() {
         // load the data
         importData();
     }
 
-//    public PostOffice(String name, String address, String email, Manager manager) {
-//        this.name = name;
-//        this.address = address;
-//        this.email = email;
-//        this.manager = manager;
-//        this.deliveries = new ArrayList<>();
-//        this.advertisements = new ArrayList<>();
-//        this.tickets= new ArrayList<>();
-//        this.clients = new ArrayList<>();
-//        this.staffs = new ArrayList<>();
-//    }
-//
-//    public PostOffice(String name, String address, String email, List<Delivery> deliveries, List<Advertisement> advertisements, List<Ticket> tickets, List<Client> clients, List<Staff> staffs, Manager manager) {
-//        this.name = name;
-//        this.address = address;
-//        this.email = email;
-//        this.deliveries = deliveries;
-//        this.advertisements = advertisements;
-//        this.tickets = tickets;
-//        this.clients = clients;
-//        this.staffs = staffs;
-//        this.manager = manager;
-//    }
-
     /**
      * exports all current data inside the post-center into their appropriate files in Resources
      */
-    public static void exportData() {
+    public static boolean exportData() {
         try {
             exportPostOfficeInfo();
             exportDeliveries();
@@ -72,12 +48,15 @@ public class PostOffice implements FilePaths{
             for (StackTraceElement trace : e.getStackTrace()) {
                 System.out.println(trace.toString());
             }
+            return false;
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
             for (StackTraceElement trace : e.getStackTrace()) {
                 System.out.println(trace.toString());
             }
+            return false;
         }
+        return true;
     }
 
     /**
@@ -318,7 +297,7 @@ public class PostOffice implements FilePaths{
     /**
      * loads all registered data from Resource file
      */
-    private static void importData() {
+    public static boolean importData() {
         try {
             String[] info = importPostOfficeInfo();
             name = info[0];
@@ -341,8 +320,9 @@ public class PostOffice implements FilePaths{
             for (StackTraceElement ste : e.getStackTrace()) {
                 System.out.println(ste.toString());
             }
+            return false;
         }
-
+        return true;
     }
 
     /**
@@ -415,7 +395,7 @@ public class PostOffice implements FilePaths{
                 String description = parcelLine[2];
                 int quantity = Integer.parseInt(parcelLine[3]);
                 String itemName = parcelLine[4];
-                int itemWeight = Integer.parseInt(parcelLine[5]);
+                double itemWeight = Double.parseDouble(parcelLine[5]);
                 LocalDateTime itemTime = LocalDateTime.parse(parcelLine[6]);
                 LocalDateTime arrivalTime = LocalDateTime.parse(parcelLine[7]);
                 Delivery.Status status = (parcelLine[8].equalsIgnoreCase("DELIVERED")) ?
@@ -608,7 +588,7 @@ public class PostOffice implements FilePaths{
     }
 
     /**
-     * inner function for importData() that imports all OPEN Ticket data from Tickets.csv
+     * inner function for importData() that imports all OPEN Ticket data from Opened_Tickets.csv
      * @throws RuntimeException general unchecked exception
      */
     private static void importOpenedTickets() throws RuntimeException{
@@ -616,7 +596,7 @@ public class PostOffice implements FilePaths{
     }
 
     /**
-     * inner function for importData() that imports all OPEN Ticket data from Tickets.csv
+     * inner function for importData() that imports all OPEN Ticket data from Ongoing_Tickets.csv
      * @throws RuntimeException general unchecked exception
      */
     private static void importOngoingTickets() throws RuntimeException{

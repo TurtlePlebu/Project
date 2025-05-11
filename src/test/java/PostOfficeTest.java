@@ -1,10 +1,12 @@
-package org.example;
+import org.example.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Scanner;
 
-public class Main {
-    public static void main(String[] args) {
+public class PostOfficeTest {
+    @Test
+    public void exportDataTest() {
         Staff staff = new Staff("Nathan", "NathanChg@hotmail.com"); String password1 = "Turtle";
         Courier courier = new Courier("Vinh", "Quang@hotmail.com"); String password2 = "Personal5";
         Client client = new Client("Nathan", "NathanChg@hotmail.com", "288 rue de boheme"); String password3 = "Pinotta";
@@ -28,6 +30,12 @@ public class Main {
         PostOffice.ongoingTickets.add(processing);
         PostOffice.completedTickets.add(closed);
 
-        PostOffice.exportData();
+
+        Assertions.assertTrue(PostOffice.exportData());
+    }
+
+    @Test
+    public void importData() {
+        Assertions.assertTrue(PostOffice.importData());
     }
 }

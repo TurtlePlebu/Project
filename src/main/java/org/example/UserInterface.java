@@ -33,13 +33,6 @@ public class UserInterface {
                     throw new InvalidNumberOptionException();
                 }
 
-                switch (choice) {
-                    case 1 -> clientRegisterMenu(); 
-                    case 2 -> staffRegisterMenu(); 
-                    case 3 -> login(); 
-                    case 4 -> PostOffice.exportData();
-                }
-
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
 
@@ -52,6 +45,13 @@ public class UserInterface {
                     System.out.println(stackTraceElement);
                 }
 
+            }
+
+            switch (choice) {
+                case 1 -> clientRegisterMenu();
+                case 2 -> staffRegisterMenu();
+                case 3 -> login();
+                case 4 -> PostOffice.exportData();
             }
 
         } while (choice != 4);
@@ -150,8 +150,8 @@ public class UserInterface {
 
         } while (failed);
 
-        Client newClient = new Client(userInfo[1], userInfo[2], address);
-        newClient.register(userInfo[3]);
+        Client newClient = new Client(userInfo[0], userInfo[1], address);
+        newClient.register(userInfo[2]);
         System.out.println("Registered!\n");
     }
 
@@ -260,23 +260,23 @@ public class UserInterface {
                     throw new InvalidNumberOptionException();
                 }
 
-                switch (choice) {
-                    case 1 -> viewDeliveryInbox(courier);
-                    case 2 -> createMail(courier);
-                    case 3 -> viewClientList(courier);
-                    case 4 -> viewStaffList(courier);
-                    case 5 -> deleteDelivery(courier);
-                    case 6 -> viewOngoingParcels(courier);
-                    case 7 -> deliverParcel(courier);
-                    case 8 -> PostOffice.exportData();
-                }
-
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
 
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
 
+            }
+
+            switch (choice) {
+                case 1 -> viewDeliveryInbox(courier);
+                case 2 -> createMail(courier);
+                case 3 -> viewClientList(courier);
+                case 4 -> viewStaffList(courier);
+                case 5 -> deleteDelivery(courier);
+                case 6 -> viewOngoingParcels(courier);
+                case 7 -> deliverParcel(courier);
+                case 8 -> PostOffice.exportData();
             }
 
         } while (choice != 11);
@@ -305,18 +305,21 @@ public class UserInterface {
                     throw new InvalidNumberOptionException();
                 }
 
-                switch (choice) {
-                    case 1 -> courier.viewOngoingParcels("id ascendingly");
-                    case 2 -> courier.viewOngoingParcels("id descendingly");
-                    case 3 -> courier.viewOngoingParcels("time descendingly ");
-                    case 4 -> courier.viewOngoingParcels("");
-                    case 5 -> PostOffice.exportData();
-                }
+
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
             }
+
+            switch (choice) {
+                case 1 -> courier.viewOngoingParcels("id ascendingly");
+                case 2 -> courier.viewOngoingParcels("id descendingly");
+                case 3 -> courier.viewOngoingParcels("time descendingly ");
+                case 4 -> courier.viewOngoingParcels("");
+                case 5 -> PostOffice.exportData();
+            }
+
         }while (choice != 5);
     }
 
@@ -387,26 +390,26 @@ public class UserInterface {
                     throw new InvalidNumberOptionException();
                 }
 
-                switch (choice) {
-                    case 1 -> viewDeliveryInbox(staff);
-                    case 2 -> createMail(staff);
-                    case 3 -> createParcel(staff);
-                    case 4 -> processParcel(staff);
-                    case 5 -> viewClientList(staff);
-                    case 6 -> viewStaffList(staff);
-                    case 7 -> reviewTicket(staff);
-                    case 8 -> deleteDelivery(staff);
-                    case 9 -> deleteDeliverySystem(staff);
-                    case 10 -> viewAllDelivery(staff);
-                    case 11 -> PostOffice.exportData();
-                }
-
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
 
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
 
+            }
+
+            switch (choice) {
+                case 1 -> viewDeliveryInbox(staff);
+                case 2 -> createMail(staff);
+                case 3 -> createParcel(staff);
+                case 4 -> processParcel(staff);
+                case 5 -> viewClientList(staff);
+                case 6 -> viewStaffList(staff);
+                case 7 -> reviewTicket(staff);
+                case 8 -> deleteDelivery(staff);
+                case 9 -> deleteDeliverySystem(staff);
+                case 10 -> viewAllDelivery(staff);
+                case 11 -> PostOffice.exportData();
             }
 
         } while (choice != 11);
@@ -474,17 +477,18 @@ public class UserInterface {
                     throw new InvalidNumberOptionException();
                 }
 
-                switch (choice) {
-                    case 1 -> staff.viewClient("name ascendingly");
-                    case 2 -> staff.viewClient("name descendingly");
-                    case 3 -> staff.viewClient("id descendingly ");
-                    case 4 -> staff.viewClient("");
-                    case 5 -> PostOffice.exportData();
-                }
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
+            }
+
+            switch (choice) {
+                case 1 -> staff.viewClient("name ascendingly");
+                case 2 -> staff.viewClient("name descendingly");
+                case 3 -> staff.viewClient("id descendingly ");
+                case 4 -> staff.viewClient("");
+                case 5 -> PostOffice.exportData();
             }
 
         } while (choice != 5) ;
@@ -513,17 +517,18 @@ public class UserInterface {
                     throw new InvalidNumberOptionException();
                 }
 
-                switch (choice) {
-                    case 1 -> staff.viewStaff("name ascendingly");
-                    case 2 -> staff.viewStaff("name descendingly");
-                    case 3 -> staff.viewStaff("id descendingly ");
-                    case 4 -> staff.viewStaff("");
-                    case 5 -> PostOffice.exportData();
-                }
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
+            }
+
+            switch (choice) {
+                case 1 -> staff.viewStaff("name ascendingly");
+                case 2 -> staff.viewStaff("name descendingly");
+                case 3 -> staff.viewStaff("id descendingly ");
+                case 4 -> staff.viewStaff("");
+                case 5 -> PostOffice.exportData();
             }
 
         } while (choice != 5) ;
@@ -623,16 +628,16 @@ public class UserInterface {
                     throw new InvalidNumberOptionException();
                 }
 
-                switch (choice) {
-                    case 1 -> staff.viewAllDelivery("");
-                    case 2 -> staff.viewAllDelivery("reverse");
-                    case 3 -> PostOffice.exportData();
-                }
-
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
+            }
+
+            switch (choice) {
+                case 1 -> staff.viewAllDelivery("");
+                case 2 -> staff.viewAllDelivery("reverse");
+                case 3 -> PostOffice.exportData();
             }
 
         } while (choice != 3) ;
@@ -705,16 +710,16 @@ public class UserInterface {
                     throw new InvalidNumberOptionException();
                 }
 
-                switch (choice) {
-                    case 1 -> u.viewDelivery("");
-                    case 2 -> u.viewDelivery("reverse");
-                    case 3 -> PostOffice.exportData();
-                }
-
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
+            }
+
+            switch (choice) {
+                case 1 -> u.viewDelivery("");
+                case 2 -> u.viewDelivery("reverse");
+                case 3 -> PostOffice.exportData();
             }
 
         } while (choice != 3) ;
@@ -945,8 +950,8 @@ public class UserInterface {
     private static void staffRegisterMenu() throws RuntimeException {
         String[] userInfo = registerMenu();
 
-        Staff newStaff = new Staff(userInfo[1], userInfo[2]);
-        newStaff.register(userInfo[3]);
+        Staff newStaff = new Staff(userInfo[0], userInfo[1]);
+        newStaff.register(userInfo[2]);
         System.out.println("Registered!\n");
     }
 
