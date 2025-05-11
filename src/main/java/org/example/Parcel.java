@@ -45,8 +45,8 @@ public class Parcel extends Delivery{
         @Override
         public int compare(Parcel o1, Parcel o2) {
             return switch (type) {
-                case "title ascendingly" -> (o1.getParcelId() - o2.getParcelId()) * 100 + (o1.getArrivalTime().compareTo(o2.getArrivalTime()));
-                case "title descendingly" -> (o2.getParcelId() - o1.getParcelId()) * 100 + (o1.getArrivalTime().compareTo(o2.getArrivalTime()));
+                case "id ascendingly" -> (o1.getParcelId() - o2.getParcelId()) * 100 + (o1.getArrivalTime().compareTo(o2.getArrivalTime()));
+                case "id descendingly" -> (o2.getParcelId() - o1.getParcelId()) * 100 + (o1.getArrivalTime().compareTo(o2.getArrivalTime()));
                 case "time descendingly" -> (o2.getArrivalTime().compareTo(o1.getArrivalTime())) * 100 + (o1.getParcelId() - o2.getParcelId());
                 default -> (o1.getArrivalTime().compareTo(o2.getArrivalTime())) * 100 + (o1.getParcelId() - o2.getParcelId());
             };

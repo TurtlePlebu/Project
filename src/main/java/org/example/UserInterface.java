@@ -227,7 +227,7 @@ public class UserInterface {
     private static void selectUserMenu() {
         if (user instanceof Staff staff) {
             if (staff instanceof Courier courier) {
-
+                courierMenu(courier);
             }
             else {
                 staffMenu(staff);
@@ -236,6 +236,126 @@ public class UserInterface {
         if (user instanceof Client client) {
             clientMenu(client);
         }
+    }
+
+    private static void courierMenu(Courier courier) {
+        int choice = 0;
+
+        do {
+            System.out.println(
+                    "[1] View delivery inbox\n" +
+                    "[2] Send mail\n" +
+                    "[3] View client list\n" +
+                    "[4] View Staff list\n" +
+                    "[5] Remove delivery from inbox\n" +
+                    "[6] View ongoing parcels\n" +
+                    "[7] Deliver parcels\n" +
+                    "[8] Exit\n"
+            );
+            try {
+
+                choice = input.nextInt();
+
+                if (choice > 7 || choice < 1) {
+                    throw new InvalidNumberOptionException();
+                }
+
+                switch (choice) {
+                    case 1 -> viewDeliveryInbox(courier);
+                    case 2 -> createMail(courier);
+                    case 3 -> viewClientList(courier);
+                    case 4 -> viewStaffList(courier);
+                    case 5 -> deleteDelivery(courier);
+                    case 6 -> viewOngoingParcels(courier);
+                    case 7 -> deliverParcel(courier);
+                    case 8 -> PostOffice.exportData();
+                }
+
+            } catch (InvalidNumberOptionException inoe) {
+                System.out.println("Please select the following options.\n");
+
+            } catch (InputMismatchException ime) {
+                System.out.println("Please remove any symbols and enter an Integer.\n");
+
+            }
+
+        } while (choice != 11);
+    }
+
+    /**
+     * inner functions that allows the Courier to display all parcel in his inventory
+     * @param courier the current Courier
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void viewOngoingParcels(Courier courier) throws RuntimeException {
+        int choice = 0;
+
+        do {
+            try {
+                System.out.println(
+                        "[1] By Name alphabetically\n" +
+                        "[2] By Name reverse alphabetically\n" +
+                        "[3] By Id reverse\n" +
+                        "[4] By Id\n" +
+                        "[5] Exit\n"
+                );
+                choice = input.nextInt();
+
+                if (choice > 5 || choice < 1) {
+                    throw new InvalidNumberOptionException();
+                }
+
+                switch (choice) {
+                    case 1 -> courier.viewOngoingParcels("id ascendingly");
+                    case 2 -> courier.viewOngoingParcels("id descendingly");
+                    case 3 -> courier.viewOngoingParcels("time descendingly ");
+                    case 4 -> courier.viewOngoingParcels("");
+                    case 5 -> PostOffice.exportData();
+                }
+            } catch (InvalidNumberOptionException inoe) {
+                System.out.println("Please select the following options.\n");
+            } catch (InputMismatchException ime) {
+                System.out.println("Please remove any symbols and enter an Integer.\n");
+            }
+        }while (choice != 5);
+    }
+
+    /**
+     * inner function that allows the Courier to deliver a parcel to the receiver
+     * @param courier the current Courier
+     * @throws RuntimeException general unchecked exception
+     */
+    private static void deliverParcel(Courier courier) throws RuntimeException {
+        int id = 0;
+        boolean failed;
+
+        do {
+            failed = false;
+            try {
+                System.out.println("Enter parcel Id : ");
+                String idInput = input.next();
+
+                if (exitCheck(idInput)) {
+                    return;
+                }
+
+                id = Integer.parseInt(idInput);
+
+                if (courier.searchParcel(id) == null) {
+                    throw new DeliveryNotFoundException();
+                }
+
+            }  catch (InputMismatchException | NumberFormatException ime) {
+                System.out.println("Remove any symbol and enter an Integer.\n");
+                failed = true;
+            } catch (DeliveryNotFoundException dnfe) {
+                System.out.println("Unable to find given delivery.\n");
+                failed = true;
+            }
+
+        } while (failed);
+
+        courier.deliver(courier.searchParcel(id));
     }
 
     /**
@@ -359,6 +479,7 @@ public class UserInterface {
                     case 2 -> staff.viewClient("name descendingly");
                     case 3 -> staff.viewClient("id descendingly ");
                     case 4 -> staff.viewClient("");
+                    case 5 -> PostOffice.exportData();
                 }
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
@@ -397,6 +518,7 @@ public class UserInterface {
                     case 2 -> staff.viewStaff("name descendingly");
                     case 3 -> staff.viewStaff("id descendingly ");
                     case 4 -> staff.viewStaff("");
+                    case 5 -> PostOffice.exportData();
                 }
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
@@ -504,6 +626,7 @@ public class UserInterface {
                 switch (choice) {
                     case 1 -> staff.viewAllDelivery("");
                     case 2 -> staff.viewAllDelivery("reverse");
+                    case 3 -> PostOffice.exportData();
                 }
 
             } catch (InvalidNumberOptionException inoe) {
@@ -585,6 +708,7 @@ public class UserInterface {
                 switch (choice) {
                     case 1 -> u.viewDelivery("");
                     case 2 -> u.viewDelivery("reverse");
+                    case 3 -> PostOffice.exportData();
                 }
 
             } catch (InvalidNumberOptionException inoe) {

@@ -16,6 +16,18 @@ public class Courier extends Staff{
         this.parcels = new ArrayList<>();
     }
 
+    public void viewOngoingParcels(String sorting) {
+        if (parcels == null || parcels.isEmpty()) {
+            return;
+        }
+
+        parcels.sort(new Parcel.ParcelComparator(sorting));
+
+        for (Parcel parcel : parcels) {
+            System.out.println(parcel);
+        }
+    }
+
     /**
      * collects a Parcel and adds it to his inventory to deliver
      * @param parcel the
@@ -44,6 +56,18 @@ public class Courier extends Staff{
         parcels.remove(parcel);
 
         return true;
+    }
+
+    public Parcel searchParcel(int id) {
+        Parcel foundParcel = null;
+
+        for (Parcel parcel : parcels) {
+            if (parcel.getParcelId() == id) {
+                foundParcel = parcel;
+            }
+        }
+
+        return foundParcel;
     }
 
     @Override
