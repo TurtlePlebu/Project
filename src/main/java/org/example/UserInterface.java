@@ -834,7 +834,7 @@ public class UserInterface {
             } catch (InvalidEmailException iee) {
                 System.out.println("Email is invalid. Remove any symbol or whitespace.\n");
                 failed = true;
-            } catch (EmailNotFoundException enfe ) {
+            } catch (EmailNotFoundException enfe) {
                 System.out.println("Cannot find email.\n");
                 failed = true;
             }

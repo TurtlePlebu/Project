@@ -1,7 +1,6 @@
 package org.example;
 
-public class EmailNotFoundException extends RuntimeException{
-
+public class EmailNotFoundException extends RuntimeException {
     public EmailNotFoundException() {
     }
 
