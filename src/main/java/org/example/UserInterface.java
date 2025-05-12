@@ -54,11 +54,10 @@ public class UserInterface {
                 case 1 -> clientRegisterMenu();
                 case 2 -> staffRegisterMenu();
                 case 3 -> login();
-                case 4 -> PostOffice.exportData();
+                case 4 -> updateData();
             }
 
         } while (choice != 4);
-        PostOffice.importData();
     }
 
     /**
@@ -290,11 +289,10 @@ public class UserInterface {
                 case 5 -> deleteDelivery(courier);
                 case 6 -> viewOngoingParcels(courier);
                 case 7 -> deliverParcel(courier);
-                case 8 -> PostOffice.exportData();
+                case 8 -> updateData();
             }
 
         } while (choice != 8);
-        PostOffice.importData();
     }
 
     /**
@@ -337,11 +335,9 @@ public class UserInterface {
                 case 2 -> courier.viewOngoingParcels("id descendingly");
                 case 3 -> courier.viewOngoingParcels("time descendingly ");
                 case 4 -> courier.viewOngoingParcels("");
-                case 5 -> PostOffice.exportData();
             }
 
         }while (choice != 5);
-        PostOffice.importData();
     }
 
     /**
@@ -433,11 +429,10 @@ public class UserInterface {
                 case 8 -> deleteDelivery(staff);
                 case 9 -> deleteDeliverySystem(staff);
                 case 10 -> viewAllDelivery(staff);
-                case 11 -> PostOffice.exportData();
+                case 11 -> updateData();
             }
 
         } while (choice != 11);
-        PostOffice.importData();
     }
 
     /**
@@ -513,11 +508,9 @@ public class UserInterface {
                 case 2 -> staff.viewClient("name descendingly");
                 case 3 -> staff.viewClient("id descendingly ");
                 case 4 -> staff.viewClient("");
-                case 5 -> PostOffice.exportData();
             }
 
         } while (choice != 5) ;
-        PostOffice.importData();
     }
 
     /**
@@ -558,11 +551,9 @@ public class UserInterface {
                 case 2 -> staff.viewStaff("name descendingly");
                 case 3 -> staff.viewStaff("id descendingly ");
                 case 4 -> staff.viewStaff("");
-                case 5 -> PostOffice.exportData();
             }
 
         } while (choice != 5) ;
-        PostOffice.importData();
     }
 
     /**
@@ -689,11 +680,9 @@ public class UserInterface {
             switch (choice) {
                 case 1 -> staff.viewAllDelivery("");
                 case 2 -> staff.viewAllDelivery("reverse");
-                case 3 -> PostOffice.exportData();
             }
 
         } while (choice != 3) ;
-        PostOffice.importData();
     }
 
     /**
@@ -729,7 +718,7 @@ public class UserInterface {
                     case 4 -> deleteDelivery(client);
                     case 5 -> createBugReport(client);
                     case 6 -> createSupportRequest(client);
-                    case 7 -> PostOffice.exportData();
+                    case 7 -> updateData();
                 }
 
             } catch (InvalidNumberOptionException inoe) {
@@ -744,7 +733,6 @@ public class UserInterface {
             }
 
         } while (choice != 7);
-        PostOffice.importData();
     }
 
     /**
@@ -789,13 +777,11 @@ public class UserInterface {
                 switch (choice) {
                     case 1 -> u.viewDelivery("");
                     case 2 -> u.viewDelivery("reverse");
-                    case 3 -> PostOffice.exportData();
                 }
 
             }
 
         } while (choice != 3) ;
-        PostOffice.importData();
     }
 
     /**
@@ -1056,5 +1042,13 @@ public class UserInterface {
      */
     private static boolean validEmail(String str) {
         return str.contains("@") && str.contains(".") && lettersOnly(str.substring(0,str.indexOf("@")));
+    }
+
+    /**
+     * updates the files of the Post-Office system
+     */
+    private static void updateData() {
+        PostOffice.exportData();
+        PostOffice.importData();
     }
 }

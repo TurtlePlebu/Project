@@ -64,7 +64,7 @@ public class Parcel extends Delivery{
                         ,item.getWeight()
                         ,item.getPurchasedTime().toString()
                         ,quantity
-                        ,courier.getStaffId()
+                        ,(courier == null) ? -1 : courier.getStaffId()
                         );
     }
 
