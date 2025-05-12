@@ -39,6 +39,9 @@ public class UserInterface {
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
 
+            } catch (NumberFormatException nfe) {
+                System.out.println("Enter any of the following options\n");
+
             } catch (RuntimeException re) {
                 System.out.println(re.getMessage());
                 for (StackTraceElement stackTraceElement : re.getStackTrace()) {
@@ -55,6 +58,7 @@ public class UserInterface {
             }
 
         } while (choice != 4);
+        PostOffice.importData();
     }
 
     /**
@@ -163,8 +167,9 @@ public class UserInterface {
      * verifies if the user is logged in
      */
     private static void login() {
-        loginMenu();
-        selectUserMenu();
+        if (loginMenu()) {
+            selectUserMenu();
+        }
     }
 
     /**
@@ -222,6 +227,9 @@ public class UserInterface {
         } while (failed);
 
         user = (foundClient != null) ? foundClient : foundStaff;
+        password = (foundClient != null) ? PostOffice.clientSecurityPass.get(foundClient) : PostOffice.staffSecurityPass.get(foundStaff);
+
+
         return password.equals(inputPassword);
     }
 
@@ -260,7 +268,7 @@ public class UserInterface {
 
                 choice = Integer.parseInt(input.nextLine());
 
-                if (choice > 7 || choice < 1) {
+                if (choice > 8 || choice < 1) {
                     throw new InvalidNumberOptionException();
                 }
 
@@ -270,6 +278,8 @@ public class UserInterface {
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
 
+            } catch (NumberFormatException nfe) {
+                System.out.println("Enter any of the following options\n");
             }
 
             switch (choice) {
@@ -283,7 +293,8 @@ public class UserInterface {
                 case 8 -> PostOffice.exportData();
             }
 
-        } while (choice != 11);
+        } while (choice != 8);
+        PostOffice.importData();
     }
 
     /**
@@ -312,8 +323,13 @@ public class UserInterface {
 
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
+
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
+
+            } catch (NumberFormatException nfe) {
+                System.out.println("Enter any of the following options\n");
+
             }
 
             switch (choice) {
@@ -325,6 +341,7 @@ public class UserInterface {
             }
 
         }while (choice != 5);
+        PostOffice.importData();
     }
 
     /**
@@ -400,6 +417,9 @@ public class UserInterface {
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
 
+            } catch (NumberFormatException nfe) {
+                System.out.println("Enter any of the following options\n");
+
             }
 
             switch (choice) {
@@ -417,6 +437,7 @@ public class UserInterface {
             }
 
         } while (choice != 11);
+        PostOffice.importData();
     }
 
     /**
@@ -496,6 +517,7 @@ public class UserInterface {
             }
 
         } while (choice != 5) ;
+        PostOffice.importData();
     }
 
     /**
@@ -523,8 +545,12 @@ public class UserInterface {
 
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
+
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
+
+            }catch (NumberFormatException nfe) {
+                System.out.println("Enter any of the following options\n");
             }
 
             switch (choice) {
@@ -536,6 +562,7 @@ public class UserInterface {
             }
 
         } while (choice != 5) ;
+        PostOffice.importData();
     }
 
     /**
@@ -543,7 +570,22 @@ public class UserInterface {
      * @param staff the current Staff
      */
     private static void reviewTicket(Staff staff) {
-        staff.getOngoingTickets().offer(PostOffice.openedTickets.poll());
+        if (!PostOffice.ongoingTickets.isEmpty()) {
+            for (Ticket currentTicket : PostOffice.ongoingTickets) {
+                if (currentTicket.getStaff().equals(staff)) {
+                    staff.getOngoingTickets().offer(currentTicket);
+                    PostOffice.ongoingTickets = PostOffice.ongoingTickets.stream()
+                            .filter(ticket -> !ticket.equals(currentTicket))
+                            .toList();
+                }
+            }
+        } else {
+            if (PostOffice.openedTickets.isEmpty()) {
+                System.out.println("No tickets left");
+                return;
+            }
+            staff.getOngoingTickets().offer(PostOffice.openedTickets.poll());
+        }
 
         Ticket ticket = staff.getOngoingTickets().poll();
 
@@ -556,6 +598,7 @@ public class UserInterface {
                             "Time : %s\n"
                             ,ticket.getTicketId()
                             ,ticket.getClient().getName()
+                            ,ticket.getTitle()
                             ,ticket.getDetail()
                             ,ticket.getType().toString()
                             ,ticket.getCreationTime().toString()
@@ -634,8 +677,13 @@ public class UserInterface {
 
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
+
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
+
+            } catch (NumberFormatException nfe) {
+                System.out.println("Enter any of the following options\n");
+
             }
 
             switch (choice) {
@@ -645,6 +693,7 @@ public class UserInterface {
             }
 
         } while (choice != 3) ;
+        PostOffice.importData();
     }
 
     /**
@@ -689,9 +738,13 @@ public class UserInterface {
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
 
+            } catch (NumberFormatException nfe) {
+                System.out.println("Enter any of the following options\n");
+
             }
 
         } while (choice != 7);
+        PostOffice.importData();
     }
 
     /**
@@ -716,17 +769,33 @@ public class UserInterface {
 
             } catch (InvalidNumberOptionException inoe) {
                 System.out.println("Please select the following options.\n");
+
             } catch (InputMismatchException ime) {
                 System.out.println("Please remove any symbols and enter an Integer.\n");
+
+            } catch (NumberFormatException nfe) {
+                System.out.println("Enter any of the following options\n");
+
             }
 
-            switch (choice) {
-                case 1 -> u.viewDelivery("");
-                case 2 -> u.viewDelivery("reverse");
-                case 3 -> PostOffice.exportData();
+            if (u instanceof Client client) {
+                switch (choice) {
+                    case 1 -> client.viewDelivery("");
+                    case 2 -> client.viewDelivery("reverse");
+                    case 3 -> PostOffice.exportData();
+                }
+
+            } else {
+                switch (choice) {
+                    case 1 -> u.viewDelivery("");
+                    case 2 -> u.viewDelivery("reverse");
+                    case 3 -> PostOffice.exportData();
+                }
+
             }
 
         } while (choice != 3) ;
+        PostOffice.importData();
     }
 
     /**
@@ -953,6 +1022,9 @@ public class UserInterface {
      */
     private static void staffRegisterMenu() throws RuntimeException {
         String[] userInfo = registerMenu();
+        if (userInfo.length == 0) {
+            return;
+        }
 
         Staff newStaff = new Staff(userInfo[0], userInfo[1]);
         newStaff.register(userInfo[2]);

@@ -25,6 +25,7 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
         PostOffice.staffs.add(this);
         PostOffice.staffSecurityPass.put(this, password);
         PostOffice.exportData();
+        PostOffice.importData();
     }
 
     /**
@@ -53,6 +54,7 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
             }
         }
         PostOffice.exportData();
+        PostOffice.importData();
     }
 
     /**
@@ -69,6 +71,34 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
 
         PostOffice.completedTickets.add(ticket);
         PostOffice.exportData();
+        PostOffice.importData();
+    }
+
+    @Override
+    protected void viewDelivery(String sorting) {
+        if (deliveries.isEmpty()) {
+            this.deliveries = List.copyOf(PostOffice.deliveries)
+                    .stream()
+                    .filter(delivery -> (delivery instanceof Mail m) &&
+                            (m.getEmail().equalsIgnoreCase(email)))
+                    .toList();
+        }
+        if (deliveries.isEmpty()) {
+            return;
+        }
+
+        deliveries = deliveries.stream()
+                .sorted(new Delivery.DeliveryComparator(sorting))
+                .toList();
+
+        for (Delivery delivery : deliveries) {
+            if (delivery instanceof Parcel p) {
+                System.out.printf("Parcel : %s", p);
+            }
+            if (delivery instanceof Mail m) {
+                System.out.printf("Message : %s", m);
+            }
+        }
     }
 
     /**
@@ -106,10 +136,10 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
 
     @Override
     public String toString() {
-        return String.format("Staff :\n" +
-                "%-10s: %d\n" +
-                super.toString(),
-                "Staff ID", staffId);
+        return String.format("Staff ID : %s, " +
+                super.toString() + "\n"
+                ,staffId
+                );
     }
 
     @Override

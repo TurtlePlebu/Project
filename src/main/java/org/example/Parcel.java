@@ -55,8 +55,17 @@ public class Parcel extends Delivery{
 
     @Override
     public String toString() {
-        return String.format("Parcel : %-5d%-10s%-10s%-3d" + super.toString(),
-                parcelId,address,item.getName(),quantity);
+        return String.format("Parcel ID : %d, " +
+                        "Item : %s %.2fkg %s, " +
+                        "Quantity : %d, " +
+                        "Courier ID : %d, " + super.toString()
+                        ,parcelId
+                        ,item.getName()
+                        ,item.getWeight()
+                        ,item.getPurchasedTime().toString()
+                        ,quantity
+                        ,courier.getStaffId()
+                        );
     }
 
     @Override

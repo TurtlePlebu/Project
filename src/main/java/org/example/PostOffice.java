@@ -85,16 +85,19 @@ public class PostOffice implements FilePaths{
      */
     private static void exportDeliveries() throws IOException, RuntimeException {
         Set<Advertisement> ads = new HashSet<>();
+        List<Parcel> parcels = new ArrayList<>();
+        List<Mail> mails = new ArrayList<>();
 
         for (Delivery delivery : deliveries) {
             if (delivery instanceof Parcel parcel1) {
-                exportParcels(parcel1);
+                parcels.add(parcel1);
             }
             if (delivery instanceof Mail mail1) {
                 if (mail1 instanceof Advertisement ad) {
                     ads.add(ad);
+                } else {
+                    mails.add(mail1);
                 }
-                exportMails(mail1);
             }
         }
 
@@ -102,50 +105,59 @@ public class PostOffice implements FilePaths{
             ads.add(ad);
         }
 
+        exportMails(mails);
+        exportParcels(parcels);
         exportCompanyAdvertisements(ads);
     }
 
     /**
      * inner function for exportDeliveries() function that exports all the parcels of the post-center
-     * @param parcel given parcel to export into the parcel resource file
+     * @param parcels given List of Parcel to export into the parcel resource file
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private static void exportParcels(Parcel parcel) throws IOException, RuntimeException {
+    private static void exportParcels(List<Parcel> parcels) throws IOException, RuntimeException {
         File parcelFile = new File(PARCELS_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(parcelFile)) {
-            fw.write(parcel.getParcelId() + ",");
-            fw.write(parcel.getAddress() + ",");
-            fw.write(parcel.getDescription() + ",");
-            fw.write(parcel.getQuantity() + ",");
-            fw.write(parcel.getItem().getName() + ",");
-            fw.write(parcel.getItem().getWeight() + ",");
-            fw.write(parcel.getItem().getPurchasedTime().toString() + ",");
-            fw.write(parcel.getArrivalTime().toString() + ",");
-            fw.write(parcel.getStatus().toString() + ",");
-            fw.write(parcel.getCourier().getStaffId() + "\n");
+            for (Parcel parcel : parcels) {
+                fw.write(parcel.getParcelId() + ",");
+                fw.write(parcel.getAddress() + ",");
+                fw.write(parcel.getDescription() + ",");
+                fw.write(parcel.getQuantity() + ",");
+                fw.write(parcel.getItem().getName() + ",");
+                fw.write(parcel.getItem().getWeight() + ",");
+                fw.write(parcel.getItem().getPurchasedTime().toString() + ",");
+                fw.write(parcel.getArrivalTime().toString() + ",");
+                fw.write(parcel.getStatus().toString() + ",");
+                if (parcel.getCourier() == null) {
+                    fw.write("-1\n");
+                } else {
+                    fw.write(parcel.getCourier().getStaffId() + "\n");
+                }
+            }
         }
     }
 
     /**
      * inner function for exportDeliveries() function that exports all the mails of the post-center
      * separates Advertisements into a different file without duplicates
-     * @param mail given mail to export into the mail resource file
+     * @param mails given List of Mail to export into the mail resource file
      * @throws IOException Output data exceptions during writing data
      * @throws RuntimeException General unchecked exception
      */
-    private static void exportMails(Mail mail) throws IOException, RuntimeException {
+    private static void exportMails(List<Mail> mails) throws IOException, RuntimeException {
         File mailPath = new File(MAILS_FILE_PATH);
 
         try (FileWriter fw = new FileWriter(mailPath)) {
-            fw.write(mail.getTitle() + ",");
-            fw.write(mail.getAddress() + ",");
-            fw.write(mail.getDescription() + ",");
-            fw.write(mail.getArrivalTime().toString() + ",");
-            fw.write(mail.getStatus().toString() + "," );
-            fw.write(mail.getEmail() + "\n" );
-
+            for (Mail mail : mails) {
+                fw.write(mail.getTitle() + ",");
+                fw.write(mail.getAddress() + ",");
+                fw.write(mail.getDescription() + ",");
+                fw.write(mail.getArrivalTime().toString() + ",");
+                fw.write(mail.getStatus().toString() + ",");
+                fw.write(mail.getEmail() + "\n");
+            }
         }
     }
 
@@ -409,7 +421,8 @@ public class PostOffice implements FilePaths{
                 Delivery.Status status = (parcelLine[8].equalsIgnoreCase("DELIVERED")) ?
                         Delivery.Status.DELIVERED : Delivery.Status.ONGOING;
                 int courierId = Integer.parseInt(parcelLine[9]);
-                parcels.add(new Parcel(address, description, arrivalTime, status, new Item(itemName, itemWeight, itemTime), quantity, (Courier) searchStaff(courierId)));
+                Courier courier = (courierId == -1) ? null : (Courier) searchStaff(courierId);
+                parcels.add(new Parcel(address, description, arrivalTime, status, new Item(itemName, itemWeight, itemTime), quantity, courier));
             }
 
         } catch (FileNotFoundException fnfe) {
@@ -476,9 +489,9 @@ public class PostOffice implements FilePaths{
                 String title = adLine[1];
                 String description = adLine[2];
                 LocalDateTime arrivalTime = LocalDateTime.parse(adLine[3]);
-                Delivery.Status status = (adLine[4].equalsIgnoreCase("DELIVERED")) ?
+                Delivery.Status status = (adLine[3].equalsIgnoreCase("DELIVERED")) ?
                         Delivery.Status.DELIVERED : Delivery.Status.ONGOING;
-                advertisements.add(new Advertisement(description, arrivalTime, title, companyName, null));
+                ads.add(new Advertisement(description, arrivalTime, title, companyName, null));
             }
         } catch (FileNotFoundException fnfe) {
             handler(fnfe, COMPANYADVERTISEMENTS_FILE_PATH);

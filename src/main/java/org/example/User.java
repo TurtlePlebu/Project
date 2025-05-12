@@ -2,6 +2,7 @@ package org.example;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,8 +42,10 @@ public abstract class User {
         Mail mail = new Mail(address, description, LocalDateTime.now(), title, email);
 
         receiver.getDeliveries().add(mail);
+        mail.setStatus(Delivery.Status.DELIVERED);
         PostOffice.deliveries.add(mail);
         PostOffice.exportData();
+        PostOffice.importData();
     }
 
     /**
@@ -69,10 +72,11 @@ public abstract class User {
             address = ((Client) receiver).getAddress();
         }
 
-        Parcel parcel = new Parcel(address, description, null, new Item(itemName, weight, LocalDateTime.now()), quantity, null);
+        Parcel parcel = new Parcel(address, description, LocalDateTime.now().plusDays(5), new Item(itemName, weight, LocalDateTime.now()), quantity, null);
 
         PostOffice.deliveries.add(parcel);
         PostOffice.exportData();
+        PostOffice.importData();
     }
 
     /**
@@ -80,9 +84,12 @@ public abstract class User {
      * @param del the targeted Delivery to remove
      */
     protected void removeDelivery(Delivery del) {
-        deliveries.remove(del);
+        deliveries = deliveries.stream()
+                .filter(delivery -> !delivery.equals(del))
+                .toList();
         PostOffice.deliveries.remove(del);
         PostOffice.exportData();
+        PostOffice.importData();
     }
 
     /**
@@ -108,11 +115,9 @@ public abstract class User {
      * @param sorting the format of the display
      */
     protected void viewDelivery(String sorting) {
-        deliveries.sort(new Delivery.DeliveryComparator(sorting));
-
-        for (Advertisement ad : PostOffice.advertisements) {
-            System.out.printf("Ad : %s", ad);
-        }
+        deliveries = deliveries.stream()
+                .sorted(new Delivery.DeliveryComparator(sorting))
+                .toList();
 
         for (Delivery delivery : deliveries) {
             if (delivery instanceof Parcel p) {
@@ -140,10 +145,11 @@ public abstract class User {
 
     @Override
     public String toString() {
-        return String.format("%-10s: %s\n" +
-                            "%-10s: %s\n"
-                            ,"Name", name
-                            ,"E-mail", email);
+        return String.format("Name : %s, " +
+                "Email : %s, "
+                , name
+                , email
+        );
     }
 
     @Override

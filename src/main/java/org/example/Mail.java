@@ -48,7 +48,7 @@ public class Mail extends Delivery {
 
     @Override
     public String toString() {
-        return String.format("Mail : %-10s" + super.toString(),
+        return String.format("Title : %-10s, " + super.toString(),
                 title);
     }
 

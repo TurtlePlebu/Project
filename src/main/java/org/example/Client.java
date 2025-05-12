@@ -2,6 +2,8 @@ package org.example;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+
 public class Client extends User implements Registerable {
     private static int nextId = 0;
 
@@ -30,6 +32,7 @@ public class Client extends User implements Registerable {
         PostOffice.clients.add(this);
         PostOffice.clientSecurityPass.put(this, password);
         PostOffice.exportData();
+        PostOffice.importData();
     }
 
     /**
@@ -38,18 +41,22 @@ public class Client extends User implements Registerable {
      */
     @Override
     protected void viewDelivery(String sorting) {
+        for (Advertisement ad : PostOffice.advertisements) {
+            System.out.printf("Ad : %s", ad);
+        }
         if (deliveries.isEmpty()) {
             this.deliveries = List.copyOf(PostOffice.deliveries)
                     .stream()
                     .filter(client -> client.getAddress().equalsIgnoreCase(this.address))
                     .toList();
         }
-
-        deliveries.sort(new Delivery.DeliveryComparator(sorting));
-
-        for (Advertisement ad : PostOffice.advertisements) {
-            System.out.printf("Ad : %s", ad);
+        if (deliveries.isEmpty()) {
+            return;
         }
+
+        deliveries = deliveries.stream()
+                .sorted(new Delivery.DeliveryComparator(sorting))
+                .toList();
 
         for (Delivery delivery : deliveries) {
             if (delivery instanceof Parcel p) {
@@ -70,6 +77,7 @@ public class Client extends User implements Registerable {
     public void sendBugReport(String title, String description) {
         PostOffice.openedTickets.offer(new Ticket(title, description, this, Ticket.Type.BUGREPORT));
         PostOffice.exportData();
+        PostOffice.importData();
     }
 
     /**
@@ -80,6 +88,7 @@ public class Client extends User implements Registerable {
     public void sendSupportRequest(String title, String description) {
         PostOffice.openedTickets.offer(new Ticket(title, description, this, Ticket.Type.SUPPORT));
         PostOffice.exportData();
+        PostOffice.importData();
     }
 
     /**
@@ -97,6 +106,7 @@ public class Client extends User implements Registerable {
         if (!PostOffice.deliveries.contains(del)) {
             PostOffice.deliveries.add(del);
             PostOffice.exportData();
+            PostOffice.importData();
         }
 
         return !PostOffice.deliveries.contains(del);
@@ -129,12 +139,12 @@ public class Client extends User implements Registerable {
 
     @Override
     public String toString() {
-        return String.format("Client :\n" +
-                "%-10s: %d\n" +
+        return String.format("Client ID : %s, " +
                 super.toString() +
-                "%-10s: %s\n",
-                "Client ID", clientId,
-                "Address", address);
+                "Address : %s, \n"
+                ,clientId
+                ,address
+        );
     }
 
     @Override

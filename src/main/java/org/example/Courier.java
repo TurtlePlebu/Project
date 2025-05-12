@@ -33,6 +33,10 @@ public class Courier extends Staff{
      * @param parcel the
      */
     public void pickupParcel(Parcel parcel) {
+        if (parcel == null) {
+            System.out.println("No parcel left");
+            return;
+        }
         parcel.setCourier(this);
         deliveries.add(parcel);
     }

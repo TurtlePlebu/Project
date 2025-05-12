@@ -10,9 +10,11 @@ public interface UsersDeliveryManaging {
      * @param sorting the sorting format of the display
      */
     default void viewClient(String sorting) {
-        PostOffice.clients.sort(new Client.ClientComparator(sorting));
+        List<Client> clientsCopy = List.copyOf(PostOffice.clients).stream()
+                .sorted(new Client.ClientComparator(sorting))
+                .toList();
 
-        for (Client client : PostOffice.clients) {
+        for (Client client : clientsCopy) {
             System.out.printf("Client : %s", client);
         }
     }
@@ -22,9 +24,11 @@ public interface UsersDeliveryManaging {
      * @param sorting the sorting format of the display
      */
     default void viewStaff(String sorting) {
-        PostOffice.staffs.sort(new Staff.StaffComparator(sorting));
+        List<Staff> staffsCopy = List.copyOf(PostOffice.staffs).stream()
+                .sorted(new Staff.StaffComparator(sorting))
+                .toList();
 
-        for (Staff staff : PostOffice.staffs) {
+        for (Staff staff : staffsCopy) {
             if (staff instanceof Courier c) {
                 System.out.printf("Courier : %s", c);
             }
@@ -81,9 +85,11 @@ public interface UsersDeliveryManaging {
      * @param sorting the sorting format of the display
      */
     default void viewAllDelivery(String sorting) {
-        PostOffice.deliveries.sort(new Delivery.DeliveryComparator(sorting));
+        List<Delivery> deliveriesCopy = List.copyOf(PostOffice.deliveries).stream()
+                .sorted(new Delivery.DeliveryComparator(sorting))
+                .toList();
 
-        for (Delivery delivery : PostOffice.deliveries) {
+        for (Delivery delivery : deliveriesCopy) {
             if (delivery instanceof Parcel p) {
                 System.out.printf("Parcel : %s", p);
             }
@@ -98,8 +104,11 @@ public interface UsersDeliveryManaging {
      * @param id the targeted Delivery's id
      */
     default void removePostOfficeDelivery(int id) {
-        PostOffice.deliveries.remove(searchDeliverySystem(id));
+        PostOffice.deliveries = PostOffice.deliveries.stream()
+                .filter(delivery -> delivery.equals(searchDeliverySystem(id)))
+                .toList();
         PostOffice.exportData();
+        PostOffice.importData();
     }
 
     /**

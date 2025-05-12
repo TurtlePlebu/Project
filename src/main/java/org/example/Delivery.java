@@ -60,8 +60,17 @@ public abstract class Delivery {
 
     @Override
     public String toString() {
-        return String.format("%-5d%-10s%-20s%-10s%-15s\n",
-                deliveryId,address, description,String.valueOf(status),arrivalTime.toString());
+        return String.format("Delivery ID : %d, " +
+                        "Address : %s, " +
+                        "Detail : %s, " +
+                        "Acquisition Date : %s, " +
+                        "Status : %s, \n"
+                        , deliveryId
+                        , address
+                        , description
+                        , arrivalTime.toString()
+                        , status.toString()
+                );
     }
 
     @Override

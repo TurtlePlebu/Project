@@ -10,8 +10,23 @@ public class Advertisement extends Mail implements Comparable<Advertisement> {
 
     //the arrival time of the advertisement is the time when it is published
     public Advertisement(String description, LocalDateTime published, String title, String companyName, String email) {
-        super(null, description, published, title, email);
+        super(null, description, published,Status.DELIVERED, title, email);
         this.companyName = companyName;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Title : %s, " +
+                "Company Name : %s, " +
+                "Detail : %s, " +
+                "Published : %s, " +
+                "Status : %s, \n"
+                ,title
+                ,companyName
+                ,description
+                ,arrivalTime.toString()
+                ,status.toString()
+        );
     }
 
     /**
