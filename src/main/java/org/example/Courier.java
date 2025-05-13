@@ -21,7 +21,9 @@ public class Courier extends Staff{
             return;
         }
 
-        parcels.sort(new Parcel.ParcelComparator(sorting));
+        parcels = parcels.stream()
+                .sorted(new Parcel.ParcelComparator(sorting))
+                .toList();
 
         for (Parcel parcel : parcels) {
             System.out.println(parcel);

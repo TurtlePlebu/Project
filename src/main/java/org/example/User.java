@@ -45,7 +45,6 @@ public abstract class User {
         mail.setStatus(Delivery.Status.DELIVERED);
         PostOffice.deliveries.add(mail);
         PostOffice.exportData();
-        PostOffice.importData();
     }
 
     /**
@@ -76,7 +75,6 @@ public abstract class User {
 
         PostOffice.deliveries.add(parcel);
         PostOffice.exportData();
-        PostOffice.importData();
     }
 
     /**
@@ -89,7 +87,6 @@ public abstract class User {
                 .toList();
         PostOffice.deliveries.remove(del);
         PostOffice.exportData();
-        PostOffice.importData();
     }
 
     /**

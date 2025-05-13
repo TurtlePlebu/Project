@@ -38,6 +38,10 @@ public interface UsersDeliveryManaging {
         }
     }
 
+    /**
+     * finds all couriers in the Post-Office's Staff List
+     * @return a List of couriers
+     */
     default List<Courier> searchCouriers() {
         List<Courier> couriers = new ArrayList<>();
 
@@ -50,6 +54,12 @@ public interface UsersDeliveryManaging {
         return couriers;
     }
 
+    /**
+     * searches for a courier with the given id
+     * @param id the targeted Courier's id
+     * @param couriers the List of Courier
+     * @return the targeted Courier
+     */
     default Courier searchCourier(int id, List<Courier> couriers) {
         Courier foundCourier = null;
 
@@ -105,10 +115,9 @@ public interface UsersDeliveryManaging {
      */
     default void removePostOfficeDelivery(int id) {
         PostOffice.deliveries = PostOffice.deliveries.stream()
-                .filter(delivery -> delivery.equals(searchDeliverySystem(id)))
+                .filter(delivery -> !delivery.equals(searchDeliverySystem(id)))
                 .toList();
         PostOffice.exportData();
-        PostOffice.importData();
     }
 
     /**

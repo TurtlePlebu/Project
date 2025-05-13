@@ -328,6 +328,8 @@ public class PostOffice implements FilePaths{
             deliveries = importDeliveries();
             advertisements = importAdvertisements();
             distributeParcelsToCourier();
+
+            Ticket.setNextId(0);
             importOpenedTickets();
             importOngoingTickets();
             importCompletedTickets();
@@ -637,9 +639,13 @@ public class PostOffice implements FilePaths{
         importTickets(COMPLETEDTICKETs_FILE_PATH);
     }
 
+    /**
+     * inner function that imports all Tickets from any ticket files
+     * @param path the files with Ticket objects
+     * @throws RuntimeException general unchecked exception
+     */
     private static void importTickets(String path) throws RuntimeException {
         File ticketPath = new File(path);
-        Ticket.setNextId(0);
 
         try (Scanner input = new Scanner(ticketPath)) {
             while (input.hasNextLine()) {
@@ -660,13 +666,19 @@ public class PostOffice implements FilePaths{
                 LocalDateTime creationTime = LocalDateTime.parse(ticketLine[7]);
 
                 if (status.toString().equalsIgnoreCase("open")) {
-                    openedTickets.offer(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, null, creationTime));
+                    Queue<Ticket> ticketQueue = new PriorityQueue<>(new Ticket.TicketComparator(""));
+                    ticketQueue.offer(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, null, creationTime));
+                    openedTickets = ticketQueue;
                 }
                 if (status.toString().equalsIgnoreCase("processing") && staffId != null) {
-                    ongoingTickets.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
+                    List<Ticket> ticketList = new ArrayList<>();
+                    ticketList.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
+                    ongoingTickets = ticketList;
                 }
                 if (status.toString().equalsIgnoreCase("closed")  && staffId != null) {
-                    completedTickets.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
+                    List<Ticket> ticketList = new ArrayList<>();
+                    ticketList.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
+                    completedTickets = ticketList;
                 }
             }
         } catch (FileNotFoundException fnfe) {

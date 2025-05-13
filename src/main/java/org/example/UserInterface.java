@@ -20,7 +20,7 @@ public class UserInterface {
                     ,PostOffice.name);
 
             System.out.printf(
-                    "[1] Register as a %s \n" +
+                    "\n[1] Register as a %s \n" +
                     "[2] Register as a %s \n" +
                     "[3] Log in\n" +
                     "[4] Exit \n\n"
@@ -198,12 +198,6 @@ public class UserInterface {
                 foundClient = PostOffice.searchClientByEmail(email);
                 foundStaff = PostOffice.searchStaffByEmail(email);
 
-                if (foundClient != null) {
-                    password = PostOffice.clientSecurityPass.get(foundClient);
-                }
-                if (foundStaff != null) {
-                    password = PostOffice.staffSecurityPass.get(foundStaff);
-                }
                 if (foundStaff == null && foundClient == null) {
                     throw new UserNotFoundException();
                 }
@@ -254,7 +248,7 @@ public class UserInterface {
 
         do {
             System.out.println(
-                    "[1] View delivery inbox\n" +
+                    "\n[1] View delivery inbox\n" +
                     "[2] Send mail\n" +
                     "[3] View client list\n" +
                     "[4] View Staff list\n" +
@@ -306,7 +300,7 @@ public class UserInterface {
         do {
             try {
                 System.out.println(
-                        "[1] By Name alphabetically\n" +
+                        "\n[1] By Name alphabetically\n" +
                         "[2] By Name reverse alphabetically\n" +
                         "[3] By Id reverse\n" +
                         "[4] By Id\n" +
@@ -337,7 +331,7 @@ public class UserInterface {
                 case 4 -> courier.viewOngoingParcels("");
             }
 
-        }while (choice != 5);
+        } while (choice != 5);
     }
 
     /**
@@ -387,7 +381,7 @@ public class UserInterface {
 
         do {
             System.out.println(
-                            "[1] View delivery inbox\n" +
+                            "\n[1] View delivery inbox\n" +
                             "[2] Send mail\n" +
                             "[3] Send parcel\n" +
                             "[4] Process ongoing parcel\n" +
@@ -485,7 +479,7 @@ public class UserInterface {
         do {
             try {
                 System.out.println(
-                        "[1] By Name alphabetically\n" +
+                        "\n[1] By Name alphabetically\n" +
                         "[2] By Name reverse alphabetically\n" +
                         "[3] By Id reverse\n" +
                         "[4] By Id\n" +
@@ -524,7 +518,7 @@ public class UserInterface {
         do {
             try {
                 System.out.println(
-                        "[1] By Name alphabetically\n" +
+                        "\n[1] By Name alphabetically\n" +
                         "[2] By Name reverse alphabetically\n" +
                         "[3] By Id reverse\n" +
                         "[4] By Id\n" +
@@ -559,29 +553,52 @@ public class UserInterface {
     /**
      * inner function that allows the Staff to reply to the next OPEN Ticket in queue
      * @param staff the current Staff
+     * @throws RuntimeException general unchecked exception
      */
-    private static void reviewTicket(Staff staff) {
-        if (!PostOffice.ongoingTickets.isEmpty()) {
-            for (Ticket currentTicket : PostOffice.ongoingTickets) {
-                if (currentTicket.getStaff().equals(staff)) {
-                    staff.getOngoingTickets().offer(currentTicket);
-                    PostOffice.ongoingTickets = PostOffice.ongoingTickets.stream()
-                            .filter(ticket -> !ticket.equals(currentTicket))
-                            .toList();
+    private static void reviewTicket(Staff staff) throws RuntimeException {
+        int choice = 0;
+        Ticket ticket = null;
+
+        do {
+            try {
+                System.out.println(
+                        "\n[1] New\n" +
+                                "[2] Ongoing\n" +
+                                "[3] Exit\n"
+                );
+                choice = Integer.parseInt(input.nextLine());
+
+                if (choice > 3 || choice < 1) {
+                    throw new InvalidNumberOptionException();
                 }
+
+            } catch (InvalidNumberOptionException inoe) {
+                System.out.println("Please select the following options.\n");
+
+            } catch (InputMismatchException ime) {
+                System.out.println("Please remove any symbols and enter an Integer.\n");
+
+            }catch (NumberFormatException nfe) {
+                System.out.println("Enter any of the following options\n");
             }
-        } else {
-            if (PostOffice.openedTickets.isEmpty()) {
-                System.out.println("No tickets left");
+
+            switch (choice) {
+                case 1 -> ticket = newTicket();
+                case 2 -> ticket = staff.getOngoingTickets().poll();
+            }
+
+            if (choice == 3) {
                 return;
             }
-            staff.getOngoingTickets().offer(PostOffice.openedTickets.poll());
+        } while (choice != 1 && choice != 2);
+
+        if (ticket == null) {
+            System.out.println("No tickets left");
+            return;
         }
 
-        Ticket ticket = staff.getOngoingTickets().poll();
-
         System.out.printf(
-                            "%d\n" +
+                            "\n%d\n" +
                             "%s\n" +
                             "Title : %s\n" +
                             "Detail : %s\n" +
@@ -601,7 +618,10 @@ public class UserInterface {
 
         if (reply.contains("-10")) {
             ticket.setTicketStatus(Ticket.TicketStatus.PROCESSING);
+            ticket.setStaff(staff);
             staff.getOngoingTickets().offer(ticket);
+            PostOffice.ongoingTickets.add(ticket);
+            PostOffice.exportData();
             return;
         }
 
@@ -629,7 +649,7 @@ public class UserInterface {
 
                 choice = Integer.parseInt(choiceInput);
 
-                if (staff.searchDelivery(choice) == null) {
+                if (staff.searchDeliverySystem(choice) == null) {
                     throw new DeliveryNotFoundException();
                 }
 
@@ -656,7 +676,7 @@ public class UserInterface {
         do {
             try {
                 System.out.println(
-                        "[1] Latest\n" +
+                        "\n[1] Latest\n" +
                                 "[2] Reverse\n" +
                                 "[3] Exit\n"
                 );
@@ -695,7 +715,7 @@ public class UserInterface {
 
         do {
             System.out.println(
-                    "[1] View delivery inbox\n" +
+                    "\n[1] View delivery inbox\n" +
                     "[2] Send mail\n" +
                     "[3] Send parcel\n" +
                     "[4] Remove delivery from inbox\n" +
@@ -745,7 +765,7 @@ public class UserInterface {
         do {
             try {
                 System.out.println(
-                                "[1] Latest\n" +
+                                "\n[1] Latest\n" +
                                 "[2] Reverse\n" +
                                 "[3] Exit\n"
                 );
@@ -1050,5 +1070,21 @@ public class UserInterface {
     private static void updateData() {
         PostOffice.exportData();
         PostOffice.importData();
+    }
+
+    /**
+     * pulls a new Ticket from Opened_Tickets.csv
+     * @return a new Ticket from Opened_Tickets.csv
+     */
+    private static Ticket newTicket() {
+        Ticket ticket;
+
+        if (PostOffice.openedTickets.isEmpty()) {
+            return null;
+        }
+
+        ticket = PostOffice.openedTickets.poll();
+
+        return ticket;
     }
 }

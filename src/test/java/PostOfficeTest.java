@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 public class PostOfficeTest {
     @Test
     public void exportDataTest() {
-        Staff staff = new Staff("Nathan", "Nathan@hotmail.com"); String password1 = "Turtle";
+        Staff staff = new Staff("Nathan", "Nathan@hotmail.com"); String password3 = "Pinotta";
         Courier courier = new Courier("Vinh", "Quang@hotmail.com"); String password2 = "Personal5";
-        Client client = new Client("Nathan", "NathanChg@hotmail.com", "rue de boheme"); String password3 = "Pinotta";
+        Client client = new Client("Nathan", "NathanChg@hotmail.com", "rue de boheme"); String password1 = "Turtle";
         Parcel parcel = new Parcel("Rue de boheme", "Computer Mouse", LocalDateTime.now(), Delivery.Status.DELIVERED, new Item("Mouse", 1.6, LocalDateTime.now()),1, courier);
         Mail mail = new Mail("Rue de boheme", "This message is a test", LocalDateTime.now(), Delivery.Status.DELIVERED,"Testing", "NathanChg@hotmail.com");
         Advertisement ad = new Advertisement("Get your discounted price for a new AI mop", LocalDateTime.now(), "AIMop", "MOP Industry", "MOP@Industry.com");

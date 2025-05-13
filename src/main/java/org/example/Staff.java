@@ -54,7 +54,6 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
             }
         }
         PostOffice.exportData();
-        PostOffice.importData();
     }
 
     /**
@@ -69,9 +68,12 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
         ticket.setTicketStatus(Ticket.TicketStatus.CLOSED);
         ticket.setStaff(this);
 
+        PostOffice.ongoingTickets = PostOffice.ongoingTickets.stream()
+                .filter(oldTicket -> !(oldTicket.getTicketId() == ticket.getTicketId()))
+                .toList();
+
         PostOffice.completedTickets.add(ticket);
         PostOffice.exportData();
-        PostOffice.importData();
     }
 
     @Override
