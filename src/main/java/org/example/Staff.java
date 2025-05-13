@@ -24,8 +24,6 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
     public void register(String password) {
         PostOffice.staffs.add(this);
         PostOffice.staffSecurityPass.put(this, password);
-        PostOffice.exportData();
-        PostOffice.importData();
     }
 
     /**
@@ -70,7 +68,9 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
                 .filter(oldTicket -> !(oldTicket.getTicketId() == ticket.getTicketId()))
                 .toList();
 
-        PostOffice.completedTickets.add(ticket);
+        List<Ticket> completedsCopy = new ArrayList<>(PostOffice.completedTickets);
+        completedsCopy.add(ticket);
+        PostOffice.completedTickets = completedsCopy;
     }
 
     @Override

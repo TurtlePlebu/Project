@@ -41,9 +41,15 @@ public abstract class User {
 
         Mail mail = new Mail(address, description, LocalDateTime.now(), title, email);
 
-        receiver.getDeliveries().add(mail);
+        List<Delivery> inboxCopy = new ArrayList<>(receiver.getDeliveries());
+        inboxCopy.add(mail);
+        receiver.setDeliveries(inboxCopy);
+
         mail.setStatus(Delivery.Status.DELIVERED);
-        PostOffice.deliveries.add(mail);
+
+        List<Delivery> deliveriesCopy = new ArrayList<>(PostOffice.deliveries);
+        deliveriesCopy.add(mail);
+        PostOffice.deliveries = deliveriesCopy;
     }
 
     /**
@@ -74,8 +80,9 @@ public abstract class User {
             parcel = new Parcel(address, description, LocalDateTime.now().plusDays(5), new Item(itemName, weight, LocalDateTime.now()), quantity, null, email);
         }
 
-
-        PostOffice.deliveries.add(parcel);
+        List<Delivery> deliveriesCopy = new ArrayList<>(PostOffice.deliveries);
+        deliveriesCopy.add(parcel);
+        PostOffice.deliveries = deliveriesCopy;
         Staff.processedParcels.offer(parcel);
     }
 
@@ -87,7 +94,9 @@ public abstract class User {
         deliveries = deliveries.stream()
                 .filter(delivery -> !delivery.equals(del))
                 .toList();
-        PostOffice.deliveries.remove(del);
+        PostOffice.deliveries = PostOffice.deliveries.stream()
+                .filter(delivery -> (!(delivery.equals(del))))
+                .toList();
     }
 
     /**

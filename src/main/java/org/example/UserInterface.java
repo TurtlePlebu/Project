@@ -1,10 +1,7 @@
 package org.example;
 
 import java.security.KeyStore;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UserInterface {
@@ -628,7 +625,10 @@ public class UserInterface {
             ticket.setTicketStatus(Ticket.TicketStatus.PROCESSING);
             ticket.setStaff(staff);
             staff.getOngoingTickets().offer(ticket);
-            PostOffice.ongoingTickets.add(ticket);
+
+            List<Ticket> ongoingCopy = new ArrayList<>(PostOffice.ongoingTickets);
+            ongoingCopy.add(ticket);
+            PostOffice.ongoingTickets = ongoingCopy;
             return;
         }
 
@@ -798,10 +798,11 @@ public class UserInterface {
                     case 2 -> client.viewDelivery("reverse");
                 }
 
-            } else {
+            }
+            if (u instanceof Staff staff) {
                 switch (choice) {
-                    case 1 -> u.viewDelivery("");
-                    case 2 -> u.viewDelivery("reverse");
+                    case 1 -> staff.viewDelivery("");
+                    case 2 -> staff.viewDelivery("reverse");
                 }
 
             }

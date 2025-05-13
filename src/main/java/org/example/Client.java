@@ -31,8 +31,6 @@ public class Client extends User implements Registerable {
     public void register(String password) {
         PostOffice.clients.add(this);
         PostOffice.clientSecurityPass.put(this, password);
-        PostOffice.exportData();
-        PostOffice.importData();
     }
 
     /**
