@@ -131,10 +131,11 @@ public class PostOffice implements FilePaths{
                 fw.write(parcel.getArrivalTime().toString() + ",");
                 fw.write(parcel.getStatus().toString() + ",");
                 if (parcel.getCourier() == null) {
-                    fw.write("-1\n");
+                    fw.write("-1,");
                 } else {
-                    fw.write(parcel.getCourier().getStaffId() + "\n");
+                    fw.write(parcel.getCourier().getStaffId() + ",");
                 }
+                fw.write(parcel.getEmail() + "\n");
             }
         }
     }
@@ -327,7 +328,9 @@ public class PostOffice implements FilePaths{
             staffSecurityPass =  importStaffSecurityPass();
             deliveries = importDeliveries();
             advertisements = importAdvertisements();
+
             distributeParcelsToCourier();
+            distributeProcessedParcels();
 
             Ticket.setNextId(0);
             importOpenedTickets();
@@ -424,7 +427,8 @@ public class PostOffice implements FilePaths{
                         Delivery.Status.DELIVERED : Delivery.Status.ONGOING;
                 int courierId = Integer.parseInt(parcelLine[9]);
                 Courier courier = (courierId == -1) ? null : (Courier) searchStaff(courierId);
-                parcels.add(new Parcel(address, description, arrivalTime, status, new Item(itemName, itemWeight, itemTime), quantity, courier));
+                String email = parcelLine[10];
+                parcels.add(new Parcel(address, description, arrivalTime, status, new Item(itemName, itemWeight, itemTime), quantity, courier, email));
             }
 
         } catch (FileNotFoundException fnfe) {
@@ -446,6 +450,17 @@ public class PostOffice implements FilePaths{
                 else {
                     Staff.getProcessedParcels().add(p);
                 }
+            }
+        }
+    }
+
+    private static void distributeProcessedParcels() {
+        if (deliveries == null || deliveries.isEmpty()) {
+            return;
+        }
+        for (Delivery delivery : deliveries) {
+            if (delivery instanceof  Parcel p && p.getCourier() == null) {
+                Staff.processedParcels.offer(p);
             }
         }
     }

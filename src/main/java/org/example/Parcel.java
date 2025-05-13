@@ -11,21 +11,25 @@ public class Parcel extends Delivery{
     private Item item;
     private int quantity;
     private Courier courier;
+    private String email;
 
-    public Parcel(String address, String description, LocalDateTime arrivalTime, Item item, int quantity, Courier courier) {
-        super(address, description, arrivalTime);
-        this.parcelId = nextId++;
-        this.item = item;
-        this.quantity = quantity;
-        this.courier = courier;
-    }
 
-    public Parcel(String address, String description, LocalDateTime arrivalTime, Status status, Item item, int quantity, Courier courier) {
+    public Parcel(String address, String description, LocalDateTime arrivalTime, Status status, Item item, int quantity, Courier courier, String email) {
         super(address, description, arrivalTime, status);
         this.parcelId = nextId++;
         this.item = item;
         this.quantity = quantity;
         this.courier = courier;
+        this.email = email;
+    }
+
+    public Parcel(String address, String description, LocalDateTime arrivalTime, Item item, int quantity, Courier courier, String email) {
+        super(address, description, arrivalTime);
+        this.parcelId = nextId++;
+        this.item = item;
+        this.quantity = quantity;
+        this.courier = courier;
+        this.email = email;
     }
 
     /**
@@ -115,5 +119,13 @@ public class Parcel extends Delivery{
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

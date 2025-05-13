@@ -49,7 +49,14 @@ public class Courier extends Staff{
      * @return a true or false value indicating the success of the operation
      */
     public boolean deliver(Parcel parcel) {
-        Client receiver = PostOffice.searchClient(parcel.getAddress());
+        User receiver;
+
+        if (parcel.getAddress().equalsIgnoreCase(PostOffice.address)) {
+            receiver = PostOffice.searchUser(parcel.getEmail());
+        } else {
+            receiver = PostOffice.searchClient(parcel.getAddress());
+        }
+
 
         if (receiver == null) {
             return false;
@@ -60,6 +67,10 @@ public class Courier extends Staff{
         receiver.getDeliveries().add(parcel);
 
         parcels.remove(parcel);
+
+        PostOffice.deliveries = PostOffice.deliveries.stream()
+                .map(delivery -> (delivery.deliveryId == parcel.getParcelId()) ? parcel : delivery)
+                .toList();
 
         return true;
     }

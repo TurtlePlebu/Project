@@ -8,7 +8,7 @@ public class Main {
         Staff staff = new Staff("Nathan", "NathanChg@hotmail.com"); String password1 = "Turtle";
         Courier courier = new Courier("Vinh", "Quang@hotmail.com"); String password2 = "Personal5";
         Client client = new Client("Nathan", "NathanChg@hotmail.com", "288 rue de boheme"); String password3 = "Pinotta";
-        Parcel parcel = new Parcel("Rue de boheme", "Computer Mouse", LocalDateTime.now(), Delivery.Status.DELIVERED, new Item("Mouse", 1.6, LocalDateTime.now()),1, courier);
+        Parcel parcel = new Parcel("Rue de boheme", "Computer Mouse", LocalDateTime.now(), Delivery.Status.DELIVERED, new Item("Mouse", 1.6, LocalDateTime.now()),1, courier, "NathanChg@hotmail.com");
         Mail mail = new Mail("Rue de boheme", "This message is a test", LocalDateTime.now(), Delivery.Status.DELIVERED,"Testing", "NathanChg@hotmail.com");
         Advertisement ad = new Advertisement("Get your discounted price for a new AI mop", LocalDateTime.now(), "AIMop", "MOP Industry", "MOP@Industry.com");
         Ticket closed = new Ticket("The new application is littered with AI", "All I see is AI generated posting", client, Ticket.Type.BUGREPORT, Ticket.TicketStatus.CLOSED, staff, LocalDateTime.now());

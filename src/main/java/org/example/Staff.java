@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Staff extends User implements Registerable, UsersDeliveryManaging {
     protected static int nextId = 0;
-    private static Queue<Parcel> processedParcels = new PriorityQueue<>(new Parcel.ParcelComparator(""));
+    protected static Queue<Parcel> processedParcels = new PriorityQueue<>(new Parcel.ParcelComparator(""));
 
     protected int staffId;
     private Queue<Ticket> ongoingTickets = new PriorityQueue<>(new Ticket.TicketComparator(""));

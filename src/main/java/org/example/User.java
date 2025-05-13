@@ -63,17 +63,21 @@ public abstract class User {
             throw new EmailNotFoundException();
         }
 
+        Parcel parcel;
         String address;
+
         if (receiver instanceof Staff || receiver instanceof Manager) {
             address = PostOffice.address;
+            parcel = new Parcel(address, description, LocalDateTime.now().plusDays(5), new Item(itemName, weight, LocalDateTime.now()), quantity, null, email);
         }
         else {
             address = ((Client) receiver).getAddress();
+            parcel = new Parcel(address, description, LocalDateTime.now().plusDays(5), new Item(itemName, weight, LocalDateTime.now()), quantity, null, email);
         }
 
-        Parcel parcel = new Parcel(address, description, LocalDateTime.now().plusDays(5), new Item(itemName, weight, LocalDateTime.now()), quantity, null);
 
         PostOffice.deliveries.add(parcel);
+
         PostOffice.exportData();
     }
 

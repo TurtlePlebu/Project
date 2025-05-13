@@ -438,6 +438,10 @@ public class UserInterface {
         boolean failed;
         int id = 0;
 
+        for (Courier courier : staff.searchCouriers()) {
+            System.out.println("Courier : " + courier.toString());
+        }
+
         do {
             failed = false;
             try {
