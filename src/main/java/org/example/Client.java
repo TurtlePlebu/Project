@@ -76,7 +76,6 @@ public class Client extends User implements Registerable {
      */
     public void sendBugReport(String title, String description) {
         PostOffice.openedTickets.offer(new Ticket(title, description, this, Ticket.Type.BUGREPORT));
-        PostOffice.exportData();
     }
 
     /**
@@ -86,7 +85,6 @@ public class Client extends User implements Registerable {
      */
     public void sendSupportRequest(String title, String description) {
         PostOffice.openedTickets.offer(new Ticket(title, description, this, Ticket.Type.SUPPORT));
-        PostOffice.exportData();
     }
 
     /**
@@ -103,7 +101,6 @@ public class Client extends User implements Registerable {
 
         if (!PostOffice.deliveries.contains(del)) {
             PostOffice.deliveries.add(del);
-            PostOffice.exportData();
         }
 
         return !PostOffice.deliveries.contains(del);

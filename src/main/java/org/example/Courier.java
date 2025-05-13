@@ -47,7 +47,10 @@ public class Courier extends Staff{
         parcel.setCourier(this);
         parcels.add(parcel);
 
-        PostOffice.exportData();
+        PostOffice.deliveries = PostOffice.deliveries
+                .stream()
+                .map(delivery -> (delivery instanceof Parcel p && p.getParcelId() == parcel.getParcelId()) ? parcel : delivery)
+                .toList();
     }
 
     /**

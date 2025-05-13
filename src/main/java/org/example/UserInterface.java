@@ -475,7 +475,7 @@ public class UserInterface {
             }
         } while (failed);
 
-        staff.assignProcessedParcel(staff.searchCourier(id, staff.searchCouriers()), Staff.getProcessedParcels().poll());
+        staff.assignProcessedParcel(staff.searchCourier(id, staff.searchCouriers()));
     }
 
     /**
@@ -631,7 +631,6 @@ public class UserInterface {
             ticket.setStaff(staff);
             staff.getOngoingTickets().offer(ticket);
             PostOffice.ongoingTickets.add(ticket);
-            PostOffice.exportData();
             return;
         }
 
@@ -800,7 +799,6 @@ public class UserInterface {
                 switch (choice) {
                     case 1 -> client.viewDelivery("");
                     case 2 -> client.viewDelivery("reverse");
-                    case 3 -> PostOffice.exportData();
                 }
 
             } else {

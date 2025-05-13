@@ -45,15 +45,13 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
     /**
      * gives the ONGOING Parcel to the assigned Courier
      * @param c the assigned Courier to deliver the Parcel
-     * @param parcel the ONGOING Parcel
      */
-    public void assignProcessedParcel(Courier c, Parcel parcel) {
+    public void assignProcessedParcel(Courier c) {
         for (Courier courier : searchCouriers()) {
             if (courier.equals(c)) {
-                courier.pickupParcel(parcel);
+                courier.pickupParcel(processedParcels.poll());
             }
         }
-        PostOffice.exportData();
     }
 
     /**
@@ -73,7 +71,6 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
                 .toList();
 
         PostOffice.completedTickets.add(ticket);
-        PostOffice.exportData();
     }
 
     @Override
