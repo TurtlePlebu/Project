@@ -76,6 +76,7 @@ public abstract class User {
 
 
         PostOffice.deliveries.add(parcel);
+        Staff.processedParcels.offer(parcel);
     }
 
     /**

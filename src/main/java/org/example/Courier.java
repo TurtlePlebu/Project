@@ -45,7 +45,10 @@ public class Courier extends Staff{
         }
 
         parcel.setCourier(this);
-        parcels.add(parcel);
+
+        List<Parcel> parcelsCopy = new ArrayList<>(parcels);
+        parcelsCopy.add(parcel);
+        parcels = parcelsCopy;
 
         PostOffice.deliveries = PostOffice.deliveries
                 .stream()
@@ -73,10 +76,15 @@ public class Courier extends Staff{
         }
 
         parcel.setArrivalTime(LocalDateTime.now());
+        parcel.setStatus(Delivery.Status.DELIVERED);
 
         receiver.getDeliveries().add(parcel);
 
-        parcels.remove(parcel);
+        List<Parcel> parcelsCopy = parcels.stream()
+                .filter(parcel1 -> !(parcel1.equals(parcel)))
+                .toList();
+
+        parcels = parcelsCopy;
 
         PostOffice.deliveries = PostOffice.deliveries.stream()
                 .map(delivery -> (delivery.deliveryId == parcel.getParcelId()) ? parcel : delivery)

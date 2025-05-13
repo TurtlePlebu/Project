@@ -56,7 +56,7 @@ public class UserInterface {
                 case 1 -> clientRegisterMenu();
                 case 2 -> staffRegisterMenu();
                 case 3 -> login();
-                case 4 -> updateData();
+                case 4 -> PostOffice.exportData();
             }
 
         } while (choice != 4);
@@ -289,7 +289,6 @@ public class UserInterface {
                 case 5 -> deleteDelivery(courier);
                 case 6 -> viewOngoingParcels(courier);
                 case 7 -> deliverParcel(courier);
-                case 8 -> updateData();
             }
 
         } while (choice != 8);
@@ -429,7 +428,6 @@ public class UserInterface {
                 case 8 -> deleteDelivery(staff);
                 case 9 -> deleteDeliverySystem(staff);
                 case 10 -> viewAllDelivery(staff);
-                case 11 -> updateData();
             }
 
         } while (choice != 11);
@@ -747,7 +745,6 @@ public class UserInterface {
                     case 4 -> deleteDelivery(client);
                     case 5 -> createBugReport(client);
                     case 6 -> createSupportRequest(client);
-                    case 7 -> updateData();
                 }
 
             } catch (InvalidNumberOptionException inoe) {
@@ -1070,14 +1067,6 @@ public class UserInterface {
      */
     private static boolean validEmail(String str) {
         return str.contains("@") && str.contains(".") && lettersOnly(str.substring(0,str.indexOf("@")));
-    }
-
-    /**
-     * updates the files of the Post-Office system
-     */
-    private static void updateData() {
-        PostOffice.exportData();
-        PostOffice.importData();
     }
 
     /**

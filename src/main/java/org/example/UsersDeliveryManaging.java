@@ -117,7 +117,6 @@ public interface UsersDeliveryManaging {
         PostOffice.deliveries = PostOffice.deliveries.stream()
                 .filter(delivery -> !delivery.equals(searchDeliverySystem(id)))
                 .toList();
-        PostOffice.exportData();
     }
 
     /**
