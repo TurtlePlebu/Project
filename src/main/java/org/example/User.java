@@ -24,7 +24,7 @@ public abstract class User {
      * @param email the destination of the mail
      * @throws EmailNotFoundException unchecked exception for invalid or missing destination
      */
-    protected void sendMail(String description, String title, String email) throws EmailNotFoundException {
+    public boolean sendMail(String description, String title, String email) throws EmailNotFoundException {
         User receiver = PostOffice.searchUser(email);
 
         if (receiver == null) {
@@ -50,6 +50,7 @@ public abstract class User {
         List<Delivery> deliveriesCopy = new ArrayList<>(PostOffice.deliveries);
         deliveriesCopy.add(mail);
         PostOffice.deliveries = deliveriesCopy;
+        return true;
     }
 
     /**
@@ -61,7 +62,7 @@ public abstract class User {
      * @param email the destination of the mail
      * @throws EmailNotFoundException unchecked exception for invalid or missing destination
      */
-    protected void sendParcel(String itemName, String description, double weight, int quantity, String email) throws EmailNotFoundException {
+    public void sendParcel(String itemName, String description, double weight, int quantity, String email) throws EmailNotFoundException {
         User receiver = PostOffice.searchUser(email);
 
         if (receiver == null) {
@@ -90,7 +91,7 @@ public abstract class User {
      * voluntarily removes a Delivery in the Client's inbox
      * @param del the targeted Delivery to remove
      */
-    protected void removeDelivery(Delivery del) {
+    public void removeDelivery(Delivery del) {
         deliveries = deliveries.stream()
                 .filter(delivery -> !delivery.equals(del))
                 .toList();
@@ -104,7 +105,7 @@ public abstract class User {
      * @param id the id of targeted Delivery
      * @return the targeted Delivery
      */
-    protected Delivery searchDelivery(int id) {
+    public Delivery searchDelivery(int id) {
         Delivery del = null;
         if (checkDelivery(id)) {
             for (Delivery delivery : deliveries) {
@@ -121,7 +122,7 @@ public abstract class User {
      * displays all the deliveries of the User
      * @param sorting the format of the display
      */
-    protected void viewDelivery(String sorting) {
+    public void viewDelivery(String sorting) {
         deliveries = deliveries.stream()
                 .sorted(new Delivery.DeliveryComparator(sorting))
                 .toList();
@@ -141,7 +142,7 @@ public abstract class User {
      * @param id the id of the Delivery
      * @return a true or false value indicating the presence of the Delivery
      */
-    protected boolean checkDelivery(int id) {
+    public boolean checkDelivery(int id) {
         for (Delivery delivery : deliveries) {
             if (delivery.getDeliveryId() == id) {
                 return true;

@@ -74,7 +74,7 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
     }
 
     @Override
-    protected void viewDelivery(String sorting) {
+    public void viewDelivery(String sorting) {
         if (deliveries.isEmpty()) {
             this.deliveries = List.copyOf(PostOffice.deliveries)
                     .stream()

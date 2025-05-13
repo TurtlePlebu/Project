@@ -38,7 +38,7 @@ public class Client extends User implements Registerable {
      * @param sorting the format of the display
      */
     @Override
-    protected void viewDelivery(String sorting) {
+    public void viewDelivery(String sorting) {
         for (Advertisement ad : PostOffice.advertisements) {
             System.out.printf("Ad : %s", ad);
         }

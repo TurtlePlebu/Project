@@ -11,7 +11,6 @@ public class Courier extends Staff{
 
     public Courier(String name, String email) {
         super(name, email);
-        this.staffId = Staff.nextId++;
         this.role = Role.COURIER;
         this.parcels = new ArrayList<>();
     }

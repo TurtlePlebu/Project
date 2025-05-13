@@ -665,6 +665,10 @@ public class PostOffice implements FilePaths{
     private static void importTickets(String path) throws RuntimeException {
         File ticketPath = new File(path);
 
+        Queue<Ticket> newOpenTicketQueue = new PriorityQueue<>(new Ticket.TicketComparator(""));
+        List<Ticket> newOngoingTicketList = new ArrayList<>();
+        List<Ticket> newCompletedTicketList = new ArrayList<>();
+
         try (Scanner input = new Scanner(ticketPath)) {
             while (input.hasNextLine()) {
                 String[] ticketLine = input.nextLine().split(",");
@@ -684,19 +688,22 @@ public class PostOffice implements FilePaths{
                 LocalDateTime creationTime = LocalDateTime.parse(ticketLine[7]);
 
                 if (status.toString().equalsIgnoreCase("open")) {
-                    Queue<Ticket> ticketQueue = new PriorityQueue<>(new Ticket.TicketComparator(""));
-                    ticketQueue.offer(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, null, creationTime));
-                    openedTickets = ticketQueue;
+                    newOpenTicketQueue.offer(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, null, creationTime));
+                    if (!input.hasNextLine()) {
+                        openedTickets = newOpenTicketQueue;
+                    }
                 }
                 if (status.toString().equalsIgnoreCase("processing") && staffId != null) {
-                    List<Ticket> ticketList = new ArrayList<>();
-                    ticketList.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
-                    ongoingTickets = ticketList;
+                    newOngoingTicketList.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
+                    if (!input.hasNextLine()) {
+                        ongoingTickets = newOngoingTicketList;
+                    }
                 }
                 if (status.toString().equalsIgnoreCase("closed")  && staffId != null) {
-                    List<Ticket> ticketList = new ArrayList<>();
-                    ticketList.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
-                    completedTickets = ticketList;
+                    newCompletedTicketList.add(new Ticket(title, detail, searchClient(Integer.parseInt(clientId)), type, status, searchStaff(Integer.parseInt(staffId)), creationTime));
+                    if (!input.hasNextLine()) {
+                        completedTickets = newCompletedTicketList;
+                    }
                 }
             }
         } catch (FileNotFoundException fnfe) {
@@ -736,6 +743,11 @@ public class PostOffice implements FilePaths{
         return null;
     }
 
+    /**
+     * finds the Client with the given address in the List of clients
+     * @param address the address of the targeted client
+     * @return the client with the given address
+     */
     public static Client searchClient(String address) {
         if (clients == null || clients.isEmpty() || address == null) {
             return null;
@@ -801,6 +813,11 @@ public class PostOffice implements FilePaths{
         return users;
     }
 
+    /**
+     * finds the Client with the given email in the List of clients
+     * @param email the email of the targeted client
+     * @return the client with the given email
+     */
     public static Client searchClientByEmail(String email) {
         if (clients == null || clients.isEmpty() || email == null || email.isBlank()) {
             return null;
@@ -815,6 +832,11 @@ public class PostOffice implements FilePaths{
         return null;
     }
 
+    /**
+     * finds the Staff with the given email in the List of staffs
+     * @param email the email of the targeted staff
+     * @return the Staff with the given email
+     */
     public static Staff searchStaffByEmail(String email) {
         if (staffs == null || staffs.isEmpty() || email == null || email.isBlank()) {
             return null;
