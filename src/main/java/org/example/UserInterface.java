@@ -1,7 +1,9 @@
 package org.example;
 
+import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -220,8 +222,12 @@ public class UserInterface {
         } while (failed);
 
         user = (foundClient != null) ? foundClient : foundStaff;
-        password = (foundClient != null) ? PostOffice.clientSecurityPass.get(foundClient) : PostOffice.staffSecurityPass.get(foundStaff);
+        password = (foundClient != null) ? findClientPassword(foundClient) : findStaffPassword(foundStaff);
 
+        if (password == null) {
+            System.out.println("Could not find password");
+            return false;
+        }
 
         return password.equals(inputPassword);
     }
@@ -1090,5 +1096,35 @@ public class UserInterface {
         ticket = PostOffice.openedTickets.poll();
 
         return ticket;
+    }
+
+    /**
+     * finds the password of the given Staff object
+     * due to deep data structure, a data issue occurred when comparing and retrieving values in the StaffSecurityPass map
+     * @param staff the targeted Staff object
+     * @return the password of the Staff object
+     */
+    private static String findStaffPassword(Staff staff) {
+        for (Map.Entry<Staff, String> entry : PostOffice.staffSecurityPass.entrySet()) {
+            if (entry.getKey().equals(staff)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    /**
+    * finds the password of the given Client object
+    * due to deep data structure, a data issue occurred when comparing and retrieving values in the ClientSecurityPass map
+    * @param client the targeted Client object
+    * @return the password of the Client object
+    */
+    private static String findClientPassword(Client client) {
+        for (Map.Entry<Client, String> entry : PostOffice.clientSecurityPass.entrySet()) {
+            if (entry.getKey().equals(client)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 }

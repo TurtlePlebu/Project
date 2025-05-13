@@ -20,8 +20,8 @@ public class PostOffice implements FilePaths{
     public static List<Staff> staffs = new ArrayList<>();
     public static Manager manager = new Manager("Nathan", "CanadaPostManagement@CanadaPost.com");
 
-    public static Map<Staff, String> staffSecurityPass = new HashMap<>();
-    public static Map<Client, String> clientSecurityPass = new HashMap<>();
+    public static Map<Staff, String> staffSecurityPass = new TreeMap<>(new Staff.StaffComparator(""));
+    public static Map<Client, String> clientSecurityPass = new TreeMap<>(new Client.ClientComparator(""));
 
     public PostOffice() {
         // load the data
@@ -42,6 +42,9 @@ public class PostOffice implements FilePaths{
             exportOpenedTickets();
             exportOngoingTickets();
             exportCompletedTickets();
+
+            distributeProcessedParcels();
+            distributeParcelsToCourier();
 
         } catch (IOException e) {
             System.out.println("Could not write all the data");
@@ -329,8 +332,8 @@ public class PostOffice implements FilePaths{
             deliveries = importDeliveries();
             advertisements = importAdvertisements();
 
-            distributeParcelsToCourier();
             distributeProcessedParcels();
+            distributeParcelsToCourier();
 
             Ticket.setNextId(0);
             importOpenedTickets();
@@ -586,7 +589,7 @@ public class PostOffice implements FilePaths{
      */
     private static Map<Client, String> importClientSecurityPass() throws RuntimeException {
         File clientSecurityPath = new File(CLIENT_SECURITY_PASS_FILE_PATH);
-        Map<Client, String> clientSecurityPass = new HashMap<>();
+        Map<Client, String> clientSecurityPass = new TreeMap<>(new Client.ClientComparator(""));
 
         try (Scanner input = new Scanner(clientSecurityPath)) {
             while (input.hasNextLine()) {
@@ -611,7 +614,7 @@ public class PostOffice implements FilePaths{
      */
     private static Map<Staff, String> importStaffSecurityPass() throws RuntimeException {
         File staffSecurityPath = new File(STAFF_SECURITY_PASS_FILE_PATH);
-        Map<Staff, String> staffsSecurityPass = new HashMap<>();
+        Map<Staff, String> staffsSecurityPass = new TreeMap<>(new Staff.StaffComparator(""));
 
         try (Scanner input = new Scanner(staffSecurityPath)) {
             while (input.hasNextLine()) {

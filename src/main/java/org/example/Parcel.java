@@ -82,7 +82,7 @@ public class Parcel extends Delivery{
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), parcelId, address, item, quantity);
+        return Objects.hash(super.hashCode(), address, item, quantity);
     }
 
     public static void setNextId(int nextId) {

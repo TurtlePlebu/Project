@@ -16,6 +16,10 @@ public class Courier extends Staff{
         this.parcels = new ArrayList<>();
     }
 
+    /**
+     * displays all the parcel in the Courier's inventory
+     * @param sorting the sorting format of the display
+     */
     public void viewOngoingParcels(String sorting) {
         if (parcels == null || parcels.isEmpty()) {
             return;
@@ -39,8 +43,11 @@ public class Courier extends Staff{
             System.out.println("No parcel left");
             return;
         }
+
         parcel.setCourier(this);
-        deliveries.add(parcel);
+        parcels.add(parcel);
+
+        PostOffice.exportData();
     }
 
     /**
