@@ -6,10 +6,11 @@ import java.util.List;
 public interface UsersDeliveryManaging {
 
     /**
-     * displays all clients in the Post-Office's list of Client
+     * displays all clients in the Post-Office's list of Client*
      * @param sorting the sorting format of the display
+     * @return a true or false value indicating the success of the operation
      */
-    default void viewClient(String sorting) {
+    default boolean viewClient(String sorting) {
         List<Client> clientsCopy = List.copyOf(PostOffice.clients).stream()
                 .sorted(new Client.ClientComparator(sorting))
                 .toList();
@@ -17,13 +18,15 @@ public interface UsersDeliveryManaging {
         for (Client client : clientsCopy) {
             System.out.printf("Client : %s", client);
         }
+        return true;
     }
 
     /**
      * displays all staffs in the Post-Office's list of Staff
      * @param sorting the sorting format of the display
+     * @return a true or false value indicating the success of the operation
      */
-    default void viewStaff(String sorting) {
+    default boolean viewStaff(String sorting) {
         List<Staff> staffsCopy = List.copyOf(PostOffice.staffs).stream()
                 .sorted(new Staff.StaffComparator(sorting))
                 .toList();
@@ -36,6 +39,7 @@ public interface UsersDeliveryManaging {
                 System.out.printf("Staff : %s", staff);
             }
         }
+        return true;
     }
 
     /**
@@ -73,28 +77,11 @@ public interface UsersDeliveryManaging {
     }
 
     /**
-     * searches for a Staff with the given id
-     * @param id the id of the targeted Staff
-     * @return the Staff with the corresponding id
-     */
-    default Staff searchStaff(int id) {
-        return searchStaff(id);
-    }
-
-    /**
-     * searches for a Client with the given id
-     * @param id the id of the targeted Client
-     * @return the Client with the corresponding id
-     */
-    default Client searchClient(int id) {
-        return PostOffice.searchClient(id);
-    }
-
-    /**
      * displays all deliveries in the Post-Office's list of Delivery
      * @param sorting the sorting format of the display
+     * @return a true or false value indicating the success of the operation
      */
-    default void viewAllDelivery(String sorting) {
+    default boolean viewAllDelivery(String sorting) {
         List<Delivery> deliveriesCopy = List.copyOf(PostOffice.deliveries).stream()
                 .sorted(new Delivery.DeliveryComparator(sorting))
                 .toList();
@@ -107,6 +94,7 @@ public interface UsersDeliveryManaging {
                 System.out.printf("Message : %s", m);
             }
         }
+        return true;
     }
 
     /**

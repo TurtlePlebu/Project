@@ -36,6 +36,7 @@ public class Client extends User implements Registerable {
     /**
      * displays all the deliveries and advertisements with this Client's address
      * @param sorting the format of the display
+     * @return a true or false value indicating the success of the operation
      */
     @Override
     public boolean viewDelivery(String sorting) {

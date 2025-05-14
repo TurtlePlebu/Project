@@ -59,27 +59,6 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
         PostOffice.completedTickets = completedsCopy;
     }
 
-    @Override
-    public boolean viewDelivery(String sorting) {
-        if (deliveries.isEmpty()) {
-            return false;
-        }
-
-        deliveries = deliveries.stream()
-                .sorted(new Delivery.DeliveryComparator(sorting))
-                .toList();
-
-        for (Delivery delivery : deliveries) {
-            if (delivery instanceof Parcel p) {
-                System.out.printf("Parcel : %s", p);
-            }
-            if (delivery instanceof Mail m) {
-                System.out.printf("Message : %s", m);
-            }
-        }
-        return true;
-    }
-
     /**
      * inner Comparator class sorting by:
      * name ascendingly, then id ascendingly

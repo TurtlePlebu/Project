@@ -22,6 +22,7 @@ public abstract class User {
      * @param description the description inside the message
      * @param title the title of the message
      * @param email the destination of the mail
+     * @return a true or false value indicating the success of the operation
      * @throws EmailNotFoundException unchecked exception for invalid or missing destination
      */
     public boolean sendMail(String description, String title, String email) throws EmailNotFoundException {
@@ -121,6 +122,7 @@ public abstract class User {
     /**
      * displays all the deliveries of the User
      * @param sorting the format of the display
+     * @return a true or false value indicating the success of the operation
      */
     public boolean viewDelivery(String sorting) {
         if (deliveries == null || deliveries.isEmpty()) {
