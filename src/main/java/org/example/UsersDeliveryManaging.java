@@ -123,4 +123,21 @@ public interface UsersDeliveryManaging {
 
         return foundDelivery;
     }
+
+    /**
+     * displays all the advertisements in the Post-Office's system
+     * @return a true or false value indicating the success of the operation
+     */
+    default boolean viewAllAds() {
+
+        PostOffice.advertisements = PostOffice.advertisements.stream()
+                .sorted()
+                .toList();
+
+        for (Advertisement advertisement : PostOffice.advertisements) {
+            System.out.println(advertisement);
+        }
+
+        return true;
+    }
 }

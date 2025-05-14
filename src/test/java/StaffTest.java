@@ -234,4 +234,14 @@ public class StaffTest {
                         && mail.equals(PostOffice.deliveries.get(2))
         );
     }
+
+    @Test
+    public void viewAllAdsTest1() {
+        Assertions.assertTrue(PostOffice.searchStaff(0).viewAllAds());
+    }
+
+    @Test
+    public void viewAllAdsTest2() {
+        Assertions.assertTrue(PostOffice.searchStaff(1).viewAllAds());
+    }
 }

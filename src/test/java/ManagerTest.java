@@ -140,4 +140,9 @@ public class ManagerTest {
                         && mail.equals(PostOffice.deliveries.get(2))
         );
     }
+
+    @Test
+    public void viewAllAdsTest1() {
+        Assertions.assertTrue(PostOffice.manager.viewAllAds());
+    }
 }

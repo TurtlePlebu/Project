@@ -16,13 +16,6 @@ public class Client extends User implements Registerable {
         this.address = address;
     }
 
-    public Client(String name, String email, String address, List<Delivery> deliveries) {
-        super(name, email);
-        this.clientId = nextId++;
-        this.address = address;
-        this.deliveries = deliveries;
-    }
-
     /**
      * registers the client to the Post-Office system
      * updates the Post-Office data afterward

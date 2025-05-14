@@ -250,6 +250,8 @@ public class UserInterface {
         int choice = 0;
 
         do {
+            System.out.println("Welcome to the courier menu!");
+
             System.out.println(
                     "\n[1] View delivery inbox\n" +
                     "[2] Send mail\n" +
@@ -382,6 +384,8 @@ public class UserInterface {
         int choice = 0;
 
         do {
+            System.out.println("Welcome to the staff Menu!");
+
             System.out.println(
                             "\n[1] View delivery inbox\n" +
                             "[2] Send mail\n" +
@@ -393,13 +397,14 @@ public class UserInterface {
                             "[8] Remove delivery from inbox\n" +
                             "[9] Remove delivery from system\n" +
                             "[10] View all the deliveries\n" +
-                            "[11] Exit\n"
+                            "[11] View all advertisements\n" +
+                            "[12] Exit\n"
             );
             try {
 
                 choice = Integer.parseInt(input.nextLine());
 
-                if (choice > 11 || choice < 1) {
+                if (choice > 12 || choice < 1) {
                     throw new InvalidNumberOptionException();
                 }
 
@@ -425,9 +430,10 @@ public class UserInterface {
                 case 8 -> deleteDelivery(staff);
                 case 9 -> deleteDeliverySystem(staff);
                 case 10 -> viewAllDelivery(staff);
+                case 11 -> staff.viewAllAds();
             }
 
-        } while (choice != 11);
+        } while (choice != 12);
     }
 
     /**
@@ -505,7 +511,7 @@ public class UserInterface {
             switch (choice) {
                 case 1 -> staff.viewClient("name ascendingly");
                 case 2 -> staff.viewClient("name descendingly");
-                case 3 -> staff.viewClient("id descendingly ");
+                case 3 -> staff.viewClient("id descendingly");
                 case 4 -> staff.viewClient("");
             }
 
@@ -721,6 +727,8 @@ public class UserInterface {
         int choice = 0;
 
         do {
+
+            System.out.println("Welcome to the client Menu!");
             System.out.println(
                     "\n[1] View delivery inbox\n" +
                     "[2] Send mail\n" +
