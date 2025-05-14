@@ -401,7 +401,27 @@ public class PostOffice implements FilePaths{
             deliveries.add(delivery);
         }
 
+        distributeDeliveries(deliveries);
+
         return deliveries;
+    }
+
+    /**
+     * distributes all the deliveries its respective User
+     * @param deliveries the List of all the deliveries
+     */
+    private static void distributeDeliveries(List<Delivery> deliveries) {
+        for (Delivery delivery : deliveries) {
+            if (delivery instanceof Parcel parcel) {
+                if (parcel.getStatus().equals(Delivery.Status.ONGOING)) {
+                    continue;
+                }
+                searchUser(parcel.getEmail()).receiveDelivery(parcel);
+            }
+            if (delivery instanceof Mail mail) {
+                searchUser(mail.getEmail()).receiveDelivery(mail);
+            }
+        }
     }
 
     /**

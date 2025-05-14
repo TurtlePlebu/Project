@@ -92,7 +92,7 @@ public abstract class User {
      * @param del the targeted Delivery to remove
      */
     public void removeDelivery(Delivery del) {
-        deliveries = deliveries.stream()
+        this.deliveries = deliveries.stream()
                 .filter(delivery -> !delivery.equals(del))
                 .toList();
         PostOffice.deliveries = PostOffice.deliveries.stream()
@@ -122,7 +122,11 @@ public abstract class User {
      * displays all the deliveries of the User
      * @param sorting the format of the display
      */
-    public void viewDelivery(String sorting) {
+    public boolean viewDelivery(String sorting) {
+        if (deliveries == null || deliveries.isEmpty()) {
+            return false;
+        }
+
         deliveries = deliveries.stream()
                 .sorted(new Delivery.DeliveryComparator(sorting))
                 .toList();
@@ -135,6 +139,7 @@ public abstract class User {
                 System.out.printf("Message : %s", m);
             }
         }
+        return true;
     }
 
     /**
@@ -149,6 +154,19 @@ public abstract class User {
             }
         }
         return false;
+    }
+
+    /**
+     * receives a given Delivery
+     * @param del the given Delivery
+     * @return a true or false value indicating the success of the operation
+     */
+    public boolean receiveDelivery(Delivery del) {
+        List<Delivery> deliveriesCopy = new ArrayList<>(deliveries);
+        deliveriesCopy.add(del);
+        deliveries = deliveriesCopy;
+
+        return true;
     }
 
     @Override

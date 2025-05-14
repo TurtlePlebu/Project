@@ -51,9 +51,9 @@ public class PostOfficeIOTest {
         Client client2 = new Client("Jacques", "Jpc@hotmail.com", "100e avenue"); String password6 = "hotbread";
 
         Parcel parcel = new Parcel("Rue de boheme", "Computer Mouse", LocalDateTime.now().plusDays(7), Delivery.Status.DELIVERED, new Item("Mouse", 1.6, LocalDateTime.now()),1, courier, "NathanChg@hotmail.com");
-        Parcel parcel2 = new Parcel("100e avenue", "dumbbell", LocalDateTime.now().plusDays(5), Delivery.Status.DELIVERED, new Item("Mouse", 30, LocalDateTime.now()),2, courier2, "Jpc@gmail.com");
+        Parcel parcel2 = new Parcel("100e avenue", "dumbbell", LocalDateTime.now().plusDays(5), Delivery.Status.DELIVERED, new Item("Mouse", 30, LocalDateTime.now()),2, courier2, "Jpc@hotmail.com");
         Mail mail = new Mail("Rue de boheme", "This message is a test", LocalDateTime.now(), Delivery.Status.DELIVERED,"Testing", "NathanChg@hotmail.com");
-        Mail mail2 = new Mail("100e avenue", "I need help", LocalDateTime.now(), Delivery.Status.DELIVERED,"Assignment", "Jpc@gmail.com");
+        Mail mail2 = new Mail("100e avenue", "I need help", LocalDateTime.now(), Delivery.Status.DELIVERED,"Assignment", "Jpc@hotmail.com");
         Advertisement ad = new Advertisement("Get your discounted price for a new AI mop", LocalDateTime.now(), "AIMop", "MOP Industry", "MOP@Industry.com");
         Advertisement ad2 = new Advertisement("Feeling lonely? Come get a companion!", LocalDateTime.now(), "ArtificialBunker", "ModernShelter", "Artificial@MyOnlineShelter.com");
 

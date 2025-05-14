@@ -27,20 +27,6 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
     }
 
     /**
-     * adds a Delivery in the Post-Center's list of Delivery
-     * @param del the receiving Delivery
-     * @return a true or false value indicating the success of the operation
-     */
-    @Override
-    public boolean receiveDelivery(Delivery del) {
-        if (!PostOffice.deliveries.contains(del)) {
-            PostOffice.deliveries.add(del);
-        }
-
-        return !PostOffice.deliveries.contains(del);
-    }
-
-    /**
      * gives the ONGOING Parcel to the assigned Courier
      * @param c the assigned Courier to deliver the Parcel
      */
@@ -74,16 +60,9 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
     }
 
     @Override
-    public void viewDelivery(String sorting) {
+    public boolean viewDelivery(String sorting) {
         if (deliveries.isEmpty()) {
-            this.deliveries = List.copyOf(PostOffice.deliveries)
-                    .stream()
-                    .filter(delivery -> (delivery instanceof Mail m) &&
-                            (m.getEmail().equalsIgnoreCase(email)))
-                    .toList();
-        }
-        if (deliveries.isEmpty()) {
-            return;
+            return false;
         }
 
         deliveries = deliveries.stream()
@@ -98,6 +77,7 @@ public class Staff extends User implements Registerable, UsersDeliveryManaging {
                 System.out.printf("Message : %s", m);
             }
         }
+        return true;
     }
 
     /**

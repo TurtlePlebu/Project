@@ -38,18 +38,12 @@ public class Client extends User implements Registerable {
      * @param sorting the format of the display
      */
     @Override
-    public void viewDelivery(String sorting) {
+    public boolean viewDelivery(String sorting) {
         for (Advertisement ad : PostOffice.advertisements) {
             System.out.printf("Ad : %s", ad);
         }
         if (deliveries.isEmpty()) {
-            this.deliveries = List.copyOf(PostOffice.deliveries)
-                    .stream()
-                    .filter(client -> client.getAddress().equalsIgnoreCase(this.address))
-                    .toList();
-        }
-        if (deliveries.isEmpty()) {
-            return;
+            return false;
         }
 
         deliveries = deliveries.stream()
@@ -64,7 +58,7 @@ public class Client extends User implements Registerable {
                 System.out.printf("Message : %s", m);
             }
         }
-
+        return true;
     }
 
     /**
@@ -83,25 +77,6 @@ public class Client extends User implements Registerable {
      */
     public void sendSupportRequest(String title, String description) {
         PostOffice.openedTickets.offer(new Ticket(title, description, this, Ticket.Type.SUPPORT));
-    }
-
-    /**
-     * adds a Delivery in the Client's list of Delivery
-     * and adds the Delivery to the Post-Office's data if not already existed
-     * @param del the receiving Delivery
-     * @return a true or false value indicating the success of the operation
-     */
-    @Override
-    public boolean receiveDelivery(Delivery del) {
-        if (del != null) {
-            deliveries.add(del);
-        }
-
-        if (!PostOffice.deliveries.contains(del)) {
-            PostOffice.deliveries.add(del);
-        }
-
-        return !PostOffice.deliveries.contains(del);
     }
 
     /**
