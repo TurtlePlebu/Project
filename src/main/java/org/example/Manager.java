@@ -13,7 +13,7 @@ public class Manager extends User implements UsersDeliveryManaging {
         this.managerId = nextID;
     }
 
-    protected void reassign(Staff personnel) {
+    public void reassign(Staff personnel) {
         if (personnel instanceof Courier) {
             personnel.setRole(Staff.Role.INDOORS);
         }

@@ -18,10 +18,11 @@ public class Courier extends Staff{
     /**
      * displays all the parcel in the Courier's inventory
      * @param sorting the sorting format of the display
+     * @return a true or false value indicating the success of the operation
      */
-    public void viewOngoingParcels(String sorting) {
+    public boolean viewOngoingParcels(String sorting) {
         if (parcels == null || parcels.isEmpty()) {
-            return;
+            return false;
         }
 
         parcels = parcels.stream()
@@ -31,6 +32,8 @@ public class Courier extends Staff{
         for (Parcel parcel : parcels) {
             System.out.println(parcel);
         }
+
+        return true;
     }
 
     /**
